@@ -1,3 +1,12 @@
+/*
+ At each column position, gives the posterior probability that there is an exon at the postion, followed by whether or not there actually is an exon there.
+ Can be used to generate ROC curves.
+ Use with L1 grammars: L1_trans_strands_4transpose.eg
+ First it reads through the posterior probability output given by xrate's -pp option to get the posterior probability for each letter.
+ For each section column it outputs the total posterior probability of exon.
+ Then it checks the correct stk and output 1 if it is exon and 0 if it is not exon.
+ */
+
 #include <iostream>
 #include <string>
 #include <fstream>

@@ -1,3 +1,9 @@
+/*
+ Calculates column level accuracy of an stk for oldL0 alphabet: L0.eg, L0_trans.eg, L0_trans_strands.eg
+ Outputs a line with exon/not exon accuracy followed by exact accuracy.
+ At position in the target sequence it checks agreement with the correct stk. It count all the times that they both say exon/not exon and the times when the letters agree exactly.
+ */
+
 #include <iostream>
 #include <string>
 #include <fstream>

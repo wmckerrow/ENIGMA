@@ -1,3 +1,8 @@
+/* xrate puts ancestral reconstruction results in comments.
+ This code creates an stk file containing only the ancestral reconstruction info.
+ Use this code before any of the accuracy codes.
+ */
+
 #include <iostream>
 #include <string>
 #include <fstream>

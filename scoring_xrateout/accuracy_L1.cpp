@@ -1,3 +1,9 @@
+/*
+ Calculates column level accuracy of an stk for the L1 alphabet: L1_trans_strands_4transpose.eg, L1utr_trans_strands_4transpose.eg
+ Outputs a line with coding/not coding accuracy followed by exact accuracy.
+ At position in the target sequence it checks agreement with the correct stk. It count all the times that they both say coding/not coding and the times when the letters agree exactly.
+ */
+
 #include <iostream>
 #include <string>
 #include <fstream>

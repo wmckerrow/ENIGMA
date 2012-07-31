@@ -1,3 +1,12 @@
+/* This code creates data that can be used for an ROC curve.
+ For use with oldL0 grammars: L0.eg, L0_trans.eg, L0_trans_strands_4transpose.eg
+ Instead of giving total exon proability,
+ if the correct letter is exon, it gives the probability of the correct letter
+ if the correct letter is not exon, it gives 1 - the probability of the correct letter
+ The second column is 1 if the correct letter is exon, 0 if it is not.
+ 
+ */
+
 #include <iostream>
 #include <string>
 #include <fstream>
