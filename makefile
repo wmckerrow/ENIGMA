@@ -24,6 +24,7 @@ all:
 	make exactpps_L0
 	make exactpps_L1
 	make simplify_ar
+	make retreestk
 
 eix2stadn: converters/eix2stadn.cpp
 	g++ converters/eix2stadn.cpp -o bin/eix2stadn
@@ -99,6 +100,9 @@ exactpps_L1: scoring_xrateout/exactpps_L1.cpp
 
 simplify_ar: scoring_xrateout/simplify_ar.cpp
 	g++ scoring_xrateout/simplify_ar.cpp -o bin/simplify_ar
+
+retreestk: miscellaneous/retreestk.cpp
+	g++ miscellaneous/retreestk.cpp -o bin/retreestk
 
 clean:
 	mv bin/README temp1234567890

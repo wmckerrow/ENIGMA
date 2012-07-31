@@ -1,0 +1,24 @@
+(((M1:.1,M2:.1,M3:.1,M4:.1)M:.1,S:.1)MS:.1,A:.1)AMS
+0.1666 0.1666 0.1666 0.1666 0.1666 0.1666 0.1666 0.1666 0.1666 75
+0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0 0
+end
+
+File Format is
+Tree string in Newick Format (without spaces)
+E0toI0 E0toI1 E0toI2 E1toI0 E1toI1 E1toI2 E2toI0 E2toI1 E2toI2 number of genes
+Parameters for main tree
+Parameters for mutation rates to leaves in depth first order. If there are 0 lines here then Generator will use same parameters throughout. If there is one, it will use that set for all leaves. If there are the number of leaf parents, a different parameter set will be used for each set of leaf siblings. If there is one line for each leaf, a different parameter will be used on each leaf.
+end	This must be here so we don't try to read comments as parameters.
+
+The parameters should be in the following order
+xe0toxx xe0toe0e0 float e0xtoxx e0xtoe0e0 e1xtoxx e1xtoe1e1 e2xtoxx e2xtoe2e2 e0i0toi0i0 e0i0toe0e0 e0i1toi1i1 e0i1toe0e0 e0i2toi2i2 e0i2toe0e0 e1i0toi0i0 e1i0toe1e1 e1i1toi1i1 e1i1toe1e1 e1i2toi2i2 e1i2toe1e1 e2i0toi0i0 e2i0toe2e2 e2i1toi1i1 e2i1toe2e2 e2i2toi2i2 e2i2toe2e2 i0e0toi0i0 i0e0toe0e0 i1e1toi1i1 i1e1toe1e1 i2e2toi2i2 i2e2toe2e2 approxIntronInstertion approxGeneInsertion
+
+
+Note on leaf mutation rates:
+If there are 0 lines here then Generator will use same parameters throughout.
+If there is one, it will use that set for all leaves.
+If there is one line for each leaf parent, a different parameter set will be used for each set of leaf siblings.
+If there is one line for each leaf, a different parameter will be used on each leaf.
+
+Note on tree string
+Difference finder assumes that evidence nodes and only evidence contain numbers

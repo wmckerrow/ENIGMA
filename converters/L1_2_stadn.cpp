@@ -53,8 +53,8 @@ int main (int argc, char *argv[]) {
 	for (int i=0; i<numstklines; i++) {
 		getline(inFile,line);
 		while (line[0] == '#' || line.size()==0) {
-			getline(inFile,line);
 			cout << line << endl;
+			getline(inFile,line);
 		}
 		eixStk[i] = readstkline(line);
 	}
@@ -66,142 +66,133 @@ int main (int argc, char *argv[]) {
 	}
 		
 	for (int j=1; j<eixStk[0].sequence.size(); j++) {
-		bool transition = 0;
 		for (int i=0; i<numstklines; i++) {
-			if (eixStk[i].sequence[j-1] != eixStk[i].sequence[j]) {
-				transition = 1;
-				break;
+			int added=0;
+			if ((eixStk[i].sequence[j-1] == 'x' || eixStk[i].sequence[j-1] == 'X') && (eixStk[i].sequence[j] == 'x' || eixStk[i].sequence[j] == 'X')) {
+				stadnStk[i].sequence += 'y';
+				added++;
 			}
-		}
-		if (transition) {
-			for (int i=0; i<numstklines; i++) {
-				int added=0;
-				if ((eixStk[i].sequence[j-1] == 'x' || eixStk[i].sequence[j-1] == 'X') && (eixStk[i].sequence[j] == 'x' || eixStk[i].sequence[j] == 'X')) {
-					stadnStk[i].sequence += 'y';
-					added++;
-				}
 				
-				if (eixStk[i].sequence[j-1] == 'e' && eixStk[i].sequence[j] == 'e') {
-					stadnStk[i].sequence += 'p';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'f' && eixStk[i].sequence[j] == 'f') {
-					stadnStk[i].sequence += 'q';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'g' && eixStk[i].sequence[j] == 'g') {
-					stadnStk[i].sequence += 'r';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'i' && eixStk[i].sequence[j] == 'i') {
-					stadnStk[i].sequence += 'u';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'j' && eixStk[i].sequence[j] == 'j') {
-					stadnStk[i].sequence += 'v';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'k' && eixStk[i].sequence[j] == 'k') {
-					stadnStk[i].sequence += 'w';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'x' || eixStk[i].sequence[j-1] == 'X') && eixStk[i].sequence[j] == 'e') {
-					stadnStk[i].sequence += 's';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'e' || eixStk[i].sequence[j-1] == 'f' || eixStk[i].sequence[j-1] == 'g') && (eixStk[i].sequence[j] == 'x' || eixStk[i].sequence[j] == 'X')) {
-					stadnStk[i].sequence += 't';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'i' && eixStk[i].sequence[j] == 'e') {
-					stadnStk[i].sequence += 'a';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'j' && eixStk[i].sequence[j] == 'f') {
-					stadnStk[i].sequence += 'b';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'k' && eixStk[i].sequence[j] == 'g') {
-					stadnStk[i].sequence += 'c';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'e' || eixStk[i].sequence[j-1] == 'f' || eixStk[i].sequence[j-1] == 'g') && eixStk[i].sequence[j] == 'i') {
-					stadnStk[i].sequence += 'd';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'e' || eixStk[i].sequence[j-1] == 'f' || eixStk[i].sequence[j-1] == 'g') && eixStk[i].sequence[j] == 'j') {
-					stadnStk[i].sequence += 'o';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'e' || eixStk[i].sequence[j-1] == 'f' || eixStk[i].sequence[j-1] == 'g') && eixStk[i].sequence[j] == 'k') {
-					stadnStk[i].sequence += 'n';
-					added++;
-				}
-				
-				if (eixStk[i].sequence[j-1] == 'E' && eixStk[i].sequence[j] == 'E') {
-					stadnStk[i].sequence += 'P';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'F' && eixStk[i].sequence[j] == 'F') {
-					stadnStk[i].sequence += 'Q';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'G' && eixStk[i].sequence[j] == 'G') {
-					stadnStk[i].sequence += 'R';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'I' && eixStk[i].sequence[j] == 'I') {
-					stadnStk[i].sequence += 'U';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'J' && eixStk[i].sequence[j] == 'J') {
-					stadnStk[i].sequence += 'V';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'K' && eixStk[i].sequence[j] == 'K') {
-					stadnStk[i].sequence += 'W';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'x' || eixStk[i].sequence[j-1] == 'X') && eixStk[i].sequence[j] == 'E') {
-					stadnStk[i].sequence += 'T';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'E' || eixStk[i].sequence[j-1] == 'F' || eixStk[i].sequence[j-1] == 'G') && (eixStk[i].sequence[j] == 'x' || eixStk[i].sequence[j] == 'X')) {
-					stadnStk[i].sequence += 'S';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'I' && eixStk[i].sequence[j] == 'E') {
-					stadnStk[i].sequence += 'D';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'J' && eixStk[i].sequence[j] == 'F') {
-					stadnStk[i].sequence += 'O';
-					added++;
-				}
-				if (eixStk[i].sequence[j-1] == 'K' && eixStk[i].sequence[j] == 'G') {
-					stadnStk[i].sequence += 'N';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'E' || eixStk[i].sequence[j-1] == 'F' || eixStk[i].sequence[j-1] == 'G') && eixStk[i].sequence[j] == 'I') {
-					stadnStk[i].sequence += 'A';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'E' || eixStk[i].sequence[j-1] == 'F' || eixStk[i].sequence[j-1] == 'G') && eixStk[i].sequence[j] == 'J') {
-					stadnStk[i].sequence += 'B';
-					added++;
-				}
-				if ((eixStk[i].sequence[j-1] == 'E' || eixStk[i].sequence[j-1] == 'F' || eixStk[i].sequence[j-1] == 'G') && eixStk[i].sequence[j] == 'K') {
-					stadnStk[i].sequence += 'C';
-					added++;
-				}
-				
-				if (eixStk[i].sequence[j-1] == '*' || eixStk[i].sequence[j] == '*') {
-					stadnStk[i].sequence += '*';
-					added++;
-				}
-				if (added != 1) {
-					stadnStk[i].sequence += '*';
-				}
+			if (eixStk[i].sequence[j-1] == 'e' && eixStk[i].sequence[j] == 'e') {
+				stadnStk[i].sequence += 'p';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'f' && eixStk[i].sequence[j] == 'f') {
+				stadnStk[i].sequence += 'q';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'g' && eixStk[i].sequence[j] == 'g') {
+				stadnStk[i].sequence += 'r';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'i' && eixStk[i].sequence[j] == 'i') {
+				stadnStk[i].sequence += 'u';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'j' && eixStk[i].sequence[j] == 'j') {
+				stadnStk[i].sequence += 'v';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'k' && eixStk[i].sequence[j] == 'k') {
+				stadnStk[i].sequence += 'w';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'x' || eixStk[i].sequence[j-1] == 'X') && eixStk[i].sequence[j] == 'e') {
+				stadnStk[i].sequence += 's';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'e' || eixStk[i].sequence[j-1] == 'f' || eixStk[i].sequence[j-1] == 'g') && (eixStk[i].sequence[j] == 'x' || eixStk[i].sequence[j] == 'X')) {
+				stadnStk[i].sequence += 't';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'i' && eixStk[i].sequence[j] == 'e') {
+				stadnStk[i].sequence += 'a';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'j' && eixStk[i].sequence[j] == 'f') {
+				stadnStk[i].sequence += 'b';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'k' && eixStk[i].sequence[j] == 'g') {
+				stadnStk[i].sequence += 'c';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'e' || eixStk[i].sequence[j-1] == 'f' || eixStk[i].sequence[j-1] == 'g') && eixStk[i].sequence[j] == 'i') {
+				stadnStk[i].sequence += 'd';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'e' || eixStk[i].sequence[j-1] == 'f' || eixStk[i].sequence[j-1] == 'g') && eixStk[i].sequence[j] == 'j') {
+				stadnStk[i].sequence += 'o';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'e' || eixStk[i].sequence[j-1] == 'f' || eixStk[i].sequence[j-1] == 'g') && eixStk[i].sequence[j] == 'k') {
+				stadnStk[i].sequence += 'n';
+				added++;
+			}
+			
+			if (eixStk[i].sequence[j-1] == 'E' && eixStk[i].sequence[j] == 'E') {
+				stadnStk[i].sequence += 'P';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'F' && eixStk[i].sequence[j] == 'F') {
+				stadnStk[i].sequence += 'Q';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'G' && eixStk[i].sequence[j] == 'G') {
+				stadnStk[i].sequence += 'R';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'I' && eixStk[i].sequence[j] == 'I') {
+				stadnStk[i].sequence += 'U';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'J' && eixStk[i].sequence[j] == 'J') {
+				stadnStk[i].sequence += 'V';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'K' && eixStk[i].sequence[j] == 'K') {
+				stadnStk[i].sequence += 'W';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'x' || eixStk[i].sequence[j-1] == 'X') && eixStk[i].sequence[j] == 'E') {
+				stadnStk[i].sequence += 'T';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'E' || eixStk[i].sequence[j-1] == 'F' || eixStk[i].sequence[j-1] == 'G') && (eixStk[i].sequence[j] == 'x' || eixStk[i].sequence[j] == 'X')) {
+				stadnStk[i].sequence += 'S';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'I' && eixStk[i].sequence[j] == 'E') {
+				stadnStk[i].sequence += 'D';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'J' && eixStk[i].sequence[j] == 'F') {
+				stadnStk[i].sequence += 'O';
+				added++;
+			}
+			if (eixStk[i].sequence[j-1] == 'K' && eixStk[i].sequence[j] == 'G') {
+				stadnStk[i].sequence += 'N';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'E' || eixStk[i].sequence[j-1] == 'F' || eixStk[i].sequence[j-1] == 'G') && eixStk[i].sequence[j] == 'I') {
+				stadnStk[i].sequence += 'A';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'E' || eixStk[i].sequence[j-1] == 'F' || eixStk[i].sequence[j-1] == 'G') && eixStk[i].sequence[j] == 'J') {
+				stadnStk[i].sequence += 'B';
+				added++;
+			}
+			if ((eixStk[i].sequence[j-1] == 'E' || eixStk[i].sequence[j-1] == 'F' || eixStk[i].sequence[j-1] == 'G') && eixStk[i].sequence[j] == 'K') {
+				stadnStk[i].sequence += 'C';
+				added++;
+			}
+			
+			if (eixStk[i].sequence[j-1] == '*' || eixStk[i].sequence[j] == '*') {
+				stadnStk[i].sequence += '*';
+				added++;
+			}
+			if (added != 1) {
+				stadnStk[i].sequence += '*';
 			}
 		}
 		for (int i=0; i<numstklines; i++) {

@@ -60,7 +60,7 @@ int main (int argc, char *argv[]) {
 	string line;
 	int numstklines=0;
 	while (getline(inFile,line)) {
-		if (line[0] != '#') {
+		if (line[0] != '#' && line.size()!=0) {
 			numstklines++;
 		}
 	}
@@ -71,7 +71,8 @@ int main (int argc, char *argv[]) {
 	stkline eixStk[numstklines];
 	for (int i=0; i<numstklines; i++) {
 		getline(inFile,line);
-		while (line[0] == '#') {
+		while (line[0] == '#' || line.size()==0) {
+			cout << line << endl;
 			getline(inFile,line);
 		}
 		eixStk[i] = readstkline(line);
