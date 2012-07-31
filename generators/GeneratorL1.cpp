@@ -352,10 +352,8 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	inFile >> Newick;    //get the tree string
-	float E0toI0,E0toI1,E0toI2,E1toI0,E1toI1,E1toI2,E2toI0,E2toI1,E2toI2
-	int numgenes;
-	inFile >> E0toI0 >> E0toI1 >> E0toI2 >> E1toI0 >> E1toI1 >> E1toI2 >> E2toI0 >> E2toI1 >> E2toI2; //get the Markov parameters
-	inFile >> numgenes;
+	float E0toI0,E0toI1,E0toI2,E1toI0,E1toI1,E1toI2,E2toI0,E2toI1,E2toI2,XtoEnd;
+	inFile >> E0toI0 >> E0toI1 >> E0toI2 >> E1toI0 >> E1toI1 >> E1toI2 >> E2toI0 >> E2toI1 >> E2toI2 >> XtoEnd; //get the Markov parameters
 	float xetoxx[parameterlines],xetoee[parameterlines];
 	float e0xtoxx[parameterlines],e0xtoe0e0[parameterlines];
 	float e1xtoxx[parameterlines],e1xtoe1e1[parameterlines];
