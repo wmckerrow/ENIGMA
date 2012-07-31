@@ -1,0 +1,1 @@
+These are the grammars that have been generated for the ENIGMA project. The most advanced one (and the one you'll probably want to use) is L1utr_trans_strands_4transpose.eg. This includes reading frame, transition letters, 2 strands and the ability to transpose mutation rates on some of the branches using maketranspose.

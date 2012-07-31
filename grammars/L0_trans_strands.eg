@@ -1,0 +1,652 @@
+;; A grammar to predict consensus gene structure based on several sources of evidence
+;; To see how the macros expand, type the following:
+;;  echo | xrate -g dart/grammars/geneStructure.eg -x expanded.eg
+;;  less expanded.eg
+
+;; Here begins the grammar.  
+(grammar
+ (name geneStructure)
+ (parametric)
+
+ ;; **** BEGIN PARAMETER DEFINITIONS  ****
+ 
+ ;; Define a seed rate to initialize the training of rate parameters
+ ;; Supposedly, setting this at a low value works best, though EM is reasonably robust. 
+ (&define SEED 0.001)
+ (&define species_SEED 0.1)
+ (&define observation_SEED 0.01)
+ 
+ ;; Probability parameters - used for initial distributions and production rules. 
+ ;; Note that each 'category' nonterminal has its own equilibrium distribution
+ ;; These are currently set as uniform - one might set this a bit more 'skewed' towards
+ ;; the type of token that a nonterminal is expected to emit. 
+ (&foreach 
+  category
+  (E_cons I_cons X_cons S_cons T_cons A_cons D_cons F_cons J_cons Y_cons G_cons K_cons U_cons V_cons B_cons C_cons H_cons L_cons)
+  (&foreach-token TOK 
+   (&if
+    (&or
+     (&and (&eq category E_cons) (&eq TOK e))
+     (&and (&eq category I_cons) (&eq TOK i))
+     (&and (&eq category X_cons) (&eq TOK x))
+     (&and (&eq category S_cons) (&eq TOK s))
+     (&and (&eq category T_cons) (&eq TOK t))
+     (&and (&eq category A_cons) (&eq TOK a))
+     (&and (&eq category D_cons) (&eq TOK d))
+     (&and (&eq category F_cons) (&eq TOK f))
+     (&and (&eq category J_cons) (&eq TOK j))
+     (&and (&eq category Y_cons) (&eq TOK y))
+	 (&and (&eq category G_cons) (&eq TOK g))
+	 (&and (&eq category K_cons) (&eq TOK k))
+	 (&and (&eq category U_cons) (&eq TOK u))
+	 (&and (&eq category V_cons) (&eq TOK v))
+	 (&and (&eq category B_cons) (&eq TOK b))
+	 (&and (&eq category C_cons) (&eq TOK c))
+	 (&and (&eq category H_cons) (&eq TOK h))
+	 (&and (&eq category L_cons) (&eq TOK l))
+    )
+    (const (((&cat p_ category _ TOK) 1 )))
+    (const (((&cat p_ category _ TOK) 0 ))) ) 
+   )
+  )
+  
+  (pgroup
+   ;; Initial distribution over categories as governed by the start -> category transitions
+   ((&foreach category (E_cons I_cons X_cons S_cons T_cons A_cons D_cons F_cons J_cons Y_cons G_cons K_cons U_cons V_cons B_cons C_cons H_cons L_cons) ((&cat START2 category) (&div 1 18)) ) )
+  )
+  
+ (pgroup
+    ;; Probabilities of going from / staying in a given category at the CONSENSUS (e.g. root) level
+  ((E_cons2E_cons .25) (E_cons2T_cons .25) (E_cons2D_cons .25) (E_cons2F_cons .25))
+  ((I_cons2I_cons .34) (I_cons2A_cons .33) (I_cons2J_cons .33))
+  ((X_cons2X_cons .25) (X_cons2S_cons .5) (X_cons2Y_cons .25))
+  
+ )
+  
+ ;; Rate parameters - one set governs the inter-species changes and another the 'observation' 
+ ;; These are (for now) shared among the different chains used by the {E,I,X}_cons nonterminals
+ (&foreach 
+  TYPE 
+  (species)
+  (&foreach 
+   SRC
+   (e i x)
+   (&foreach 
+    DEST
+    (e i x)
+    (&if 
+     (&eq SRC DEST) 
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+
+ (&foreach
+  TYPE
+  (species)
+  (&foreach
+   SRC
+   (s t a d f j y)
+   (&foreach
+    DEST
+    (s t a d f j y)
+    (&if
+     (&eq SRC DEST)
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+  
+ (&foreach
+  TYPE
+  (species)
+  (&foreach
+   FORWARD
+   (e i)
+   (&foreach
+    BACKWARD
+    (e i)
+     (rate ((&cat TYPE _swap_ FORWARD _ BACKWARD) (&cat SEED) ))
+    ) ;; end BACKWARD
+   ) ;; end FORWARD
+  ) ;; end TYPE
+  
+  (&foreach
+  TYPE
+  (species)
+  (&foreach
+   FORWARD
+   (s t a d f j y)
+   (&foreach
+    BACKWARD
+    (s t a d f j y)
+     (rate ((&cat TYPE _swap_ FORWARD _ BACKWARD) (&cat SEED) ))
+    ) ;; end BACKWARD
+   ) ;; end FORWARD
+  ) ;; end TYPE
+
+ (&foreach-leaf
+  TYPE
+  (&foreach
+   SRC
+   (e i x)
+   (&foreach
+    DEST
+    (e i x)
+    (&if
+     (&eq SRC DEST)
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+
+ (&foreach-leaf
+  TYPE
+  (&foreach
+   SRC
+   (s t a d f j y)
+   (&foreach
+    DEST
+    (s t a d f j y)
+    (&if
+     (&eq SRC DEST)
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+  
+  (&foreach-leaf
+  TYPE
+  (&foreach
+   FORWARD
+   (e i s t a d f j)
+   (&foreach
+    BACKWARD
+    (g k u v b c h l)
+     (rate ((&cat TYPE _ FORWARD _ BACKWARD) (&cat SEED) ))
+    ) ;; end BACKWARD
+   ) ;; end FORWARD
+  ) ;; end TYPE
+
+  (&foreach-leaf
+  TYPE
+  (&foreach
+   FORWARD
+   (e i)
+   (&foreach
+    BACKWARD
+    (e i)
+     (rate ((&cat TYPE _swap_ FORWARD _ BACKWARD) (&cat SEED) ))
+    ) ;; end BACKWARD
+   ) ;; end FORWARD
+  ) ;; end TYPE
+  
+  (&foreach-leaf
+  TYPE
+  (&foreach
+   FORWARD
+   (s t a d f j y)
+   (&foreach
+    BACKWARD
+    (s t a d f j y)
+     (rate ((&cat TYPE _swap_ FORWARD _ BACKWARD) (&cat SEED) ))
+    ) ;; end BACKWARD
+   ) ;; end FORWARD
+  ) ;; end TYPE
+  
+ ;; **** END PARAMETER DEFINITIONS  ****
+
+ ;; **** BEGIN MARKOV CHAIN DEFINITIONS  ****
+
+ ;; Define species_chain and observation_chain
+ ;; These are identical in form, but they have separate parametrizations
+ (&foreach 
+  category 
+  (E_cons I_cons X_cons S_cons T_cons A_cons D_cons F_cons J_cons Y_cons G_cons K_cons U_cons V_cons B_cons C_cons H_cons L_cons)
+  (&foreach
+   TYPE
+   (species)
+   ;; Define the Markov chains for residue substitution ( i - e - x )
+   ;; There are two of these for each category - one for species-level evo and one observations
+   (chain
+    (update-policy parametric)
+    (terminal ((&cat category _ TYPE)))
+    
+    ;; Initial probability distributions - call forth the parameters declared in the pgroup block above
+    (&foreach-token
+     TOK
+     (initial (state (TOK)) (prob (&cat p_ category _ TOK)))
+     )
+    
+    ;; Mutation rates - simply call forth the parameters declared in the rate blocks above
+	 (mutate (from (x)) (to (e)) (rate (&cat TYPE _ x _ e) ) )
+	 (mutate (from (x)) (to (i)) (rate (&cat TYPE _ x _ i) ) )
+	 (mutate (from (x)) (to (g)) (rate (&cat TYPE _ x _ e) ) )
+	 (mutate (from (x)) (to (k)) (rate (&cat TYPE _ x _ i) ) )
+	 
+	 (mutate (from (y)) (to (s)) (rate (&cat TYPE _ y _ s) ) )
+	 (mutate (from (y)) (to (t)) (rate (&cat TYPE _ y _ t) ) )
+	 (mutate (from (y)) (to (a)) (rate (&cat TYPE _ y _ a) ) )
+	 (mutate (from (y)) (to (d)) (rate (&cat TYPE _ y _ d) ) )
+	 (mutate (from (y)) (to (f)) (rate (&cat TYPE _ y _ f) ) )
+	 (mutate (from (y)) (to (j)) (rate (&cat TYPE _ y _ j) ) )
+	 (mutate (from (y)) (to (v)) (rate (&cat TYPE _ y _ s) ) )
+	 (mutate (from (y)) (to (u)) (rate (&cat TYPE _ y _ t) ) )
+	 (mutate (from (y)) (to (c)) (rate (&cat TYPE _ y _ a) ) )
+	 (mutate (from (y)) (to (b)) (rate (&cat TYPE _ y _ d) ) )
+	 (mutate (from (y)) (to (h)) (rate (&cat TYPE _ y _ f) ) )
+	 (mutate (from (y)) (to (l)) (rate (&cat TYPE _ y _ j) ) )
+	
+	
+     (mutate (from (e)) (to (i)) (rate (&cat TYPE _ e _ i) ) )
+	 (mutate (from (e)) (to (x)) (rate (&cat TYPE _ e _ x) ) )
+	 
+	 (mutate (from (i)) (to (e)) (rate (&cat TYPE _ i _ e) ) )
+	 (mutate (from (i)) (to (x)) (rate (&cat TYPE _ i _ x) ) )
+	 
+	 (mutate (from (s)) (to (t)) (rate (&cat TYPE _ s _ t) ) )
+	 (mutate (from (s)) (to (d)) (rate (&cat TYPE _ s _ d) ) )
+	 (mutate (from (s)) (to (a)) (rate (&cat TYPE _ s _ a) ) )
+	 (mutate (from (s)) (to (f)) (rate (&cat TYPE _ s _ f) ) )
+	 (mutate (from (s)) (to (j)) (rate (&cat TYPE _ s _ j) ) )
+	 (mutate (from (s)) (to (y)) (rate (&cat TYPE _ s _ y) ) )
+	 
+	 (mutate (from (t)) (to (s)) (rate (&cat TYPE _ t _ s) ) )
+	 (mutate (from (t)) (to (d)) (rate (&cat TYPE _ t _ d) ) )
+	 (mutate (from (t)) (to (a)) (rate (&cat TYPE _ t _ a) ) )
+	 (mutate (from (t)) (to (f)) (rate (&cat TYPE _ t _ f) ) )
+	 (mutate (from (t)) (to (j)) (rate (&cat TYPE _ t _ j) ) )
+	 (mutate (from (t)) (to (y)) (rate (&cat TYPE _ t _ y) ) )
+	 
+	 (mutate (from (d)) (to (t)) (rate (&cat TYPE _ d _ t) ) )
+	 (mutate (from (d)) (to (s)) (rate (&cat TYPE _ d _ s) ) )
+	 (mutate (from (d)) (to (a)) (rate (&cat TYPE _ d _ a) ) )
+	 (mutate (from (d)) (to (f)) (rate (&cat TYPE _ d _ f) ) )
+	 (mutate (from (d)) (to (j)) (rate (&cat TYPE _ d _ j) ) )
+	 (mutate (from (d)) (to (y)) (rate (&cat TYPE _ d _ y) ) )
+	 
+	 (mutate (from (a)) (to (t)) (rate (&cat TYPE _ a _ t) ) )
+	 (mutate (from (a)) (to (s)) (rate (&cat TYPE _ a _ s) ) )
+	 (mutate (from (a)) (to (d)) (rate (&cat TYPE _ a _ d) ) )
+	 (mutate (from (a)) (to (f)) (rate (&cat TYPE _ a _ f) ) )
+	 (mutate (from (a)) (to (j)) (rate (&cat TYPE _ a _ j) ) )
+	 (mutate (from (a)) (to (y)) (rate (&cat TYPE _ a _ y) ) )
+	 
+	 (mutate (from (f)) (to (t)) (rate (&cat TYPE _ f _ t) ) )
+	 (mutate (from (f)) (to (s)) (rate (&cat TYPE _ f _ s) ) )
+	 (mutate (from (f)) (to (d)) (rate (&cat TYPE _ f _ d) ) )
+	 (mutate (from (f)) (to (a)) (rate (&cat TYPE _ f _ a) ) )
+	 (mutate (from (f)) (to (j)) (rate (&cat TYPE _ f _ j) ) )
+	 (mutate (from (f)) (to (y)) (rate (&cat TYPE _ f _ y) ) )
+	 
+	 (mutate (from (j)) (to (t)) (rate (&cat TYPE _ j _ t) ) )
+	 (mutate (from (j)) (to (s)) (rate (&cat TYPE _ j _ s) ) )
+	 (mutate (from (j)) (to (d)) (rate (&cat TYPE _ j _ d) ) )
+	 (mutate (from (j)) (to (a)) (rate (&cat TYPE _ j _ a) ) )
+	 (mutate (from (j)) (to (f)) (rate (&cat TYPE _ j _ f) ) )
+	 (mutate (from (j)) (to (y)) (rate (&cat TYPE _ j _ y) ) )
+	 
+	 
+	 (mutate (from (g)) (to (k)) (rate (&cat TYPE _ e _ i) ) )
+	 (mutate (from (g)) (to (x)) (rate (&cat TYPE _ e _ x) ) )
+	 
+	 (mutate (from (k)) (to (g)) (rate (&cat TYPE _ i _ e) ) )
+	 (mutate (from (k)) (to (x)) (rate (&cat TYPE _ i _ x) ) )
+	 
+	 (mutate (from (u)) (to (v)) (rate (&cat TYPE _ t _ s) ) )
+	 (mutate (from (u)) (to (b)) (rate (&cat TYPE _ t _ d) ) )
+	 (mutate (from (u)) (to (c)) (rate (&cat TYPE _ t _ a) ) )
+	 (mutate (from (u)) (to (h)) (rate (&cat TYPE _ t _ f) ) )
+	 (mutate (from (u)) (to (l)) (rate (&cat TYPE _ t _ j) ) )
+	 (mutate (from (u)) (to (y)) (rate (&cat TYPE _ t _ y) ) )
+	 
+	 (mutate (from (v)) (to (u)) (rate (&cat TYPE _ s _ t) ) )
+	 (mutate (from (v)) (to (b)) (rate (&cat TYPE _ s _ d) ) )
+	 (mutate (from (v)) (to (c)) (rate (&cat TYPE _ s _ a) ) )
+	 (mutate (from (v)) (to (h)) (rate (&cat TYPE _ s _ f) ) )
+	 (mutate (from (v)) (to (l)) (rate (&cat TYPE _ s _ j) ) )
+	 (mutate (from (v)) (to (y)) (rate (&cat TYPE _ s _ y) ) )
+	 
+	 (mutate (from (b)) (to (u)) (rate (&cat TYPE _ d _ t) ) )
+	 (mutate (from (b)) (to (v)) (rate (&cat TYPE _ d _ s) ) )
+	 (mutate (from (b)) (to (c)) (rate (&cat TYPE _ d _ a) ) )
+	 (mutate (from (b)) (to (h)) (rate (&cat TYPE _ d _ f) ) )
+	 (mutate (from (b)) (to (l)) (rate (&cat TYPE _ d _ j) ) )
+	 (mutate (from (b)) (to (y)) (rate (&cat TYPE _ d _ y) ) )
+	 
+	 (mutate (from (c)) (to (u)) (rate (&cat TYPE _ a _ t) ) )
+	 (mutate (from (c)) (to (v)) (rate (&cat TYPE _ a _ s) ) )
+	 (mutate (from (c)) (to (b)) (rate (&cat TYPE _ a _ d) ) )
+	 (mutate (from (c)) (to (h)) (rate (&cat TYPE _ a _ f) ) )
+	 (mutate (from (c)) (to (l)) (rate (&cat TYPE _ a _ j) ) )
+	 (mutate (from (c)) (to (y)) (rate (&cat TYPE _ a _ y) ) )
+	 
+	 (mutate (from (h)) (to (u)) (rate (&cat TYPE _ f _ t) ) )
+	 (mutate (from (h)) (to (v)) (rate (&cat TYPE _ f _ s) ) )
+	 (mutate (from (h)) (to (b)) (rate (&cat TYPE _ f _ d) ) )
+	 (mutate (from (h)) (to (c)) (rate (&cat TYPE _ f _ a) ) )
+	 (mutate (from (h)) (to (l)) (rate (&cat TYPE _ f _ j) ) )
+	 (mutate (from (h)) (to (y)) (rate (&cat TYPE _ f _ y) ) )
+	 
+	 (mutate (from (l)) (to (u)) (rate (&cat TYPE _ j _ t) ) )
+	 (mutate (from (l)) (to (v)) (rate (&cat TYPE _ j _ s) ) )
+	 (mutate (from (l)) (to (b)) (rate (&cat TYPE _ j _ d) ) )
+	 (mutate (from (l)) (to (c)) (rate (&cat TYPE _ j _ a) ) )
+	 (mutate (from (l)) (to (h)) (rate (&cat TYPE _ j _ f) ) )
+	 (mutate (from (l)) (to (y)) (rate (&cat TYPE _ j _ y) ) )
+	 
+	 (&foreach
+     FORWARD
+	 (e i)
+	  (mutate (from (FORWARD)) (to (g)) (rate (&cat TYPE _swap_ FORWARD _ e) ) )
+	  (mutate (from (FORWARD)) (to (k)) (rate (&cat TYPE _swap_ FORWARD _ i) ) )
+	 )
+	 
+	 (&foreach
+     FORWARD
+	 (e i)
+	  (mutate (from (g)) (to (FORWARD)) (rate (&cat TYPE _swap_ e _ FORWARD) ) )
+	  (mutate (from (k)) (to (FORWARD)) (rate (&cat TYPE _swap_ i _ FORWARD) ) )
+	 )
+	 
+	 (&foreach
+     FORWARD
+	 (s t a d f j)
+	  (mutate (from (FORWARD)) (to (u)) (rate (&cat TYPE _swap_ FORWARD _ s) ) )
+	  (mutate (from (FORWARD)) (to (v)) (rate (&cat TYPE _swap_ FORWARD _ t) ) )
+	  (mutate (from (FORWARD)) (to (b)) (rate (&cat TYPE _swap_ FORWARD _ a) ) )
+	  (mutate (from (FORWARD)) (to (c)) (rate (&cat TYPE _swap_ FORWARD _ d) ) )
+	  (mutate (from (FORWARD)) (to (h)) (rate (&cat TYPE _swap_ FORWARD _ f) ) )
+	  (mutate (from (FORWARD)) (to (l)) (rate (&cat TYPE _swap_ FORWARD _ j) ) )
+	 )
+	 
+	 (&foreach
+     FORWARD
+	 (s t a d f j)
+	  (mutate (from (u)) (to (FORWARD)) (rate (&cat TYPE _swap_ s _ FORWARD) ) )
+	  (mutate (from (v)) (to (FORWARD)) (rate (&cat TYPE _swap_ t _ FORWARD) ) )
+	  (mutate (from (b)) (to (FORWARD)) (rate (&cat TYPE _swap_ a _ FORWARD) ) )
+	  (mutate (from (c)) (to (FORWARD)) (rate (&cat TYPE _swap_ d _ FORWARD) ) )
+	  (mutate (from (h)) (to (FORWARD)) (rate (&cat TYPE _swap_ f _ FORWARD) ) )
+	  (mutate (from (l)) (to (FORWARD)) (rate (&cat TYPE _swap_ j _ FORWARD) ) )
+	 )
+	 
+    ) ;; end chain
+   ) ;; end types
+  ) ;; end categories
+
+ (&foreach
+  category
+  (E_cons I_cons X_cons S_cons T_cons A_cons D_cons F_cons J_cons Y_cons G_cons K_cons U_cons V_cons B_cons C_cons H_cons L_cons)
+  (&foreach-leaf
+   TYPE
+   ;; Define the Markov chains for residue substitution ( i - e - x )
+   ;; There are two of these for each category - one for species-level evo and one observations
+   (chain
+    (update-policy parametric)
+    (terminal ((&cat category _ TYPE)))
+    
+    ;; Initial probability distributions - call forth the parameters declared in the pgroup block above
+    (&foreach-token
+     TOK
+     (initial (state (TOK)) (prob (&cat p_ category _ TOK)))
+     )
+    
+    ;; Mutation rates - simply call forth the parameters declared in the rate blocks above
+	(mutate (from (x)) (to (e)) (rate (&cat TYPE _ x _ e) ) )
+	 (mutate (from (x)) (to (i)) (rate (&cat TYPE _ x _ i) ) )
+	 (mutate (from (x)) (to (g)) (rate (&cat TYPE _ x _ e) ) )
+	 (mutate (from (x)) (to (k)) (rate (&cat TYPE _ x _ i) ) )
+	 
+	 (mutate (from (y)) (to (s)) (rate (&cat TYPE _ y _ s) ) )
+	 (mutate (from (y)) (to (t)) (rate (&cat TYPE _ y _ t) ) )
+	 (mutate (from (y)) (to (a)) (rate (&cat TYPE _ y _ a) ) )
+	 (mutate (from (y)) (to (d)) (rate (&cat TYPE _ y _ d) ) )
+	 (mutate (from (y)) (to (f)) (rate (&cat TYPE _ y _ f) ) )
+	 (mutate (from (y)) (to (j)) (rate (&cat TYPE _ y _ j) ) )
+	 (mutate (from (y)) (to (v)) (rate (&cat TYPE _ y _ s) ) )
+	 (mutate (from (y)) (to (u)) (rate (&cat TYPE _ y _ t) ) )
+	 (mutate (from (y)) (to (c)) (rate (&cat TYPE _ y _ a) ) )
+	 (mutate (from (y)) (to (b)) (rate (&cat TYPE _ y _ d) ) )
+	 (mutate (from (y)) (to (h)) (rate (&cat TYPE _ y _ f) ) )
+	 (mutate (from (y)) (to (l)) (rate (&cat TYPE _ y _ j) ) )
+	
+     (mutate (from (e)) (to (i)) (rate (&cat TYPE _ e _ i) ) )
+	 (mutate (from (e)) (to (x)) (rate (&cat TYPE _ e _ x) ) )
+	 
+	 (mutate (from (i)) (to (e)) (rate (&cat TYPE _ i _ e) ) )
+	 (mutate (from (i)) (to (x)) (rate (&cat TYPE _ i _ x) ) )
+	 
+	 (mutate (from (s)) (to (t)) (rate (&cat TYPE _ s _ t) ) )
+	 (mutate (from (s)) (to (d)) (rate (&cat TYPE _ s _ d) ) )
+	 (mutate (from (s)) (to (a)) (rate (&cat TYPE _ s _ a) ) )
+	 (mutate (from (s)) (to (f)) (rate (&cat TYPE _ s _ f) ) )
+	 (mutate (from (s)) (to (j)) (rate (&cat TYPE _ s _ j) ) )
+	 (mutate (from (s)) (to (y)) (rate (&cat TYPE _ s _ y) ) )
+	 
+	 (mutate (from (t)) (to (s)) (rate (&cat TYPE _ t _ s) ) )
+	 (mutate (from (t)) (to (d)) (rate (&cat TYPE _ t _ d) ) )
+	 (mutate (from (t)) (to (a)) (rate (&cat TYPE _ t _ a) ) )
+	 (mutate (from (t)) (to (f)) (rate (&cat TYPE _ t _ f) ) )
+	 (mutate (from (t)) (to (j)) (rate (&cat TYPE _ t _ j) ) )
+	 (mutate (from (t)) (to (y)) (rate (&cat TYPE _ t _ y) ) )
+	 
+	 (mutate (from (d)) (to (t)) (rate (&cat TYPE _ d _ t) ) )
+	 (mutate (from (d)) (to (s)) (rate (&cat TYPE _ d _ s) ) )
+	 (mutate (from (d)) (to (a)) (rate (&cat TYPE _ d _ a) ) )
+	 (mutate (from (d)) (to (f)) (rate (&cat TYPE _ d _ f) ) )
+	 (mutate (from (d)) (to (j)) (rate (&cat TYPE _ d _ j) ) )
+	 (mutate (from (d)) (to (y)) (rate (&cat TYPE _ d _ y) ) )
+	 
+	 (mutate (from (a)) (to (t)) (rate (&cat TYPE _ a _ t) ) )
+	 (mutate (from (a)) (to (s)) (rate (&cat TYPE _ a _ s) ) )
+	 (mutate (from (a)) (to (d)) (rate (&cat TYPE _ a _ d) ) )
+	 (mutate (from (a)) (to (f)) (rate (&cat TYPE _ a _ f) ) )
+	 (mutate (from (a)) (to (j)) (rate (&cat TYPE _ a _ j) ) )
+	 (mutate (from (a)) (to (y)) (rate (&cat TYPE _ a _ y) ) )
+	 
+	 (mutate (from (f)) (to (t)) (rate (&cat TYPE _ f _ t) ) )
+	 (mutate (from (f)) (to (s)) (rate (&cat TYPE _ f _ s) ) )
+	 (mutate (from (f)) (to (d)) (rate (&cat TYPE _ f _ d) ) )
+	 (mutate (from (f)) (to (a)) (rate (&cat TYPE _ f _ a) ) )
+	 (mutate (from (f)) (to (j)) (rate (&cat TYPE _ f _ j) ) )
+	 (mutate (from (f)) (to (y)) (rate (&cat TYPE _ f _ y) ) )
+	 
+	 (mutate (from (j)) (to (t)) (rate (&cat TYPE _ j _ t) ) )
+	 (mutate (from (j)) (to (s)) (rate (&cat TYPE _ j _ s) ) )
+	 (mutate (from (j)) (to (d)) (rate (&cat TYPE _ j _ d) ) )
+	 (mutate (from (j)) (to (a)) (rate (&cat TYPE _ j _ a) ) )
+	 (mutate (from (j)) (to (f)) (rate (&cat TYPE _ j _ f) ) )
+	 (mutate (from (j)) (to (y)) (rate (&cat TYPE _ j _ y) ) )
+	 
+	 
+	 (mutate (from (g)) (to (k)) (rate (&cat TYPE _ e _ i) ) )
+	 (mutate (from (g)) (to (x)) (rate (&cat TYPE _ e _ x) ) )
+	 
+	 (mutate (from (k)) (to (g)) (rate (&cat TYPE _ i _ e) ) )
+	 (mutate (from (k)) (to (x)) (rate (&cat TYPE _ i _ x) ) )
+	 
+	 (mutate (from (u)) (to (v)) (rate (&cat TYPE _ t _ s) ) )
+	 (mutate (from (u)) (to (b)) (rate (&cat TYPE _ t _ d) ) )
+	 (mutate (from (u)) (to (c)) (rate (&cat TYPE _ t _ a) ) )
+	 (mutate (from (u)) (to (h)) (rate (&cat TYPE _ t _ f) ) )
+	 (mutate (from (u)) (to (l)) (rate (&cat TYPE _ t _ j) ) )
+	 (mutate (from (u)) (to (y)) (rate (&cat TYPE _ t _ y) ) )
+	 
+	 (mutate (from (v)) (to (u)) (rate (&cat TYPE _ s _ t) ) )
+	 (mutate (from (v)) (to (b)) (rate (&cat TYPE _ s _ d) ) )
+	 (mutate (from (v)) (to (c)) (rate (&cat TYPE _ s _ a) ) )
+	 (mutate (from (v)) (to (h)) (rate (&cat TYPE _ s _ f) ) )
+	 (mutate (from (v)) (to (l)) (rate (&cat TYPE _ s _ j) ) )
+	 (mutate (from (v)) (to (y)) (rate (&cat TYPE _ s _ y) ) )
+	 
+	 (mutate (from (b)) (to (u)) (rate (&cat TYPE _ d _ t) ) )
+	 (mutate (from (b)) (to (v)) (rate (&cat TYPE _ d _ s) ) )
+	 (mutate (from (b)) (to (c)) (rate (&cat TYPE _ d _ a) ) )
+	 (mutate (from (b)) (to (h)) (rate (&cat TYPE _ d _ f) ) )
+	 (mutate (from (b)) (to (l)) (rate (&cat TYPE _ d _ j) ) )
+	 (mutate (from (b)) (to (y)) (rate (&cat TYPE _ d _ y) ) )
+	 
+	 (mutate (from (c)) (to (u)) (rate (&cat TYPE _ a _ t) ) )
+	 (mutate (from (c)) (to (v)) (rate (&cat TYPE _ a _ s) ) )
+	 (mutate (from (c)) (to (b)) (rate (&cat TYPE _ a _ d) ) )
+	 (mutate (from (c)) (to (h)) (rate (&cat TYPE _ a _ f) ) )
+	 (mutate (from (c)) (to (l)) (rate (&cat TYPE _ a _ j) ) )
+	 (mutate (from (c)) (to (y)) (rate (&cat TYPE _ a _ y) ) )
+	 
+	 (mutate (from (h)) (to (u)) (rate (&cat TYPE _ f _ t) ) )
+	 (mutate (from (h)) (to (v)) (rate (&cat TYPE _ f _ s) ) )
+	 (mutate (from (h)) (to (b)) (rate (&cat TYPE _ f _ d) ) )
+	 (mutate (from (h)) (to (c)) (rate (&cat TYPE _ f _ a) ) )
+	 (mutate (from (h)) (to (l)) (rate (&cat TYPE _ f _ j) ) )
+	 (mutate (from (h)) (to (y)) (rate (&cat TYPE _ f _ y) ) )
+	 
+	 (mutate (from (l)) (to (u)) (rate (&cat TYPE _ j _ t) ) )
+	 (mutate (from (l)) (to (v)) (rate (&cat TYPE _ j _ s) ) )
+	 (mutate (from (l)) (to (b)) (rate (&cat TYPE _ j _ d) ) )
+	 (mutate (from (l)) (to (c)) (rate (&cat TYPE _ j _ a) ) )
+	 (mutate (from (l)) (to (h)) (rate (&cat TYPE _ j _ f) ) )
+	 (mutate (from (l)) (to (y)) (rate (&cat TYPE _ j _ y) ) )
+	 
+	 (&foreach
+     FORWARD
+	 (e i)
+	  (mutate (from (FORWARD)) (to (g)) (rate (&cat TYPE _swap_ FORWARD _ e) ) )
+	  (mutate (from (FORWARD)) (to (k)) (rate (&cat TYPE _swap_ FORWARD _ i) ) )
+	 )
+	 
+	 (&foreach
+     FORWARD
+	 (e i)
+	  (mutate (from (g)) (to (FORWARD)) (rate (&cat TYPE _swap_ e _ FORWARD) ) )
+	  (mutate (from (k)) (to (FORWARD)) (rate (&cat TYPE _swap_ i _ FORWARD) ) )
+	 )
+	 
+	 (&foreach
+     FORWARD
+	 (s t a d f j)
+	  (mutate (from (FORWARD)) (to (u)) (rate (&cat TYPE _swap_ FORWARD _ s) ) )
+	  (mutate (from (FORWARD)) (to (v)) (rate (&cat TYPE _swap_ FORWARD _ t) ) )
+	  (mutate (from (FORWARD)) (to (b)) (rate (&cat TYPE _swap_ FORWARD _ a) ) )
+	  (mutate (from (FORWARD)) (to (c)) (rate (&cat TYPE _swap_ FORWARD _ d) ) )
+	  (mutate (from (FORWARD)) (to (h)) (rate (&cat TYPE _swap_ FORWARD _ f) ) )
+	  (mutate (from (FORWARD)) (to (l)) (rate (&cat TYPE _swap_ FORWARD _ j) ) )
+	 )
+	 
+	 (&foreach
+     FORWARD
+	 (s t a d f j)
+	  (mutate (from (u)) (to (FORWARD)) (rate (&cat TYPE _swap_ s _ FORWARD) ) )
+	  (mutate (from (v)) (to (FORWARD)) (rate (&cat TYPE _swap_ t _ FORWARD) ) )
+	  (mutate (from (b)) (to (FORWARD)) (rate (&cat TYPE _swap_ a _ FORWARD) ) )
+	  (mutate (from (c)) (to (FORWARD)) (rate (&cat TYPE _swap_ d _ FORWARD) ) )
+	  (mutate (from (h)) (to (FORWARD)) (rate (&cat TYPE _swap_ f _ FORWARD) ) )
+	  (mutate (from (l)) (to (FORWARD)) (rate (&cat TYPE _swap_ j _ FORWARD) ) )
+	 )
+
+    ) ;; end chain
+   ) ;; end types
+  ) ;; end categories
+
+ ;; Done defining regular chains
+
+ 
+ ;; Define the hybrid chains, which are composed of a category_species chain and a category_observation components
+ ;; The observation chain models transitions on terminal branches (leading to "leaves") 
+ ;; and the species chain models transitions on the internal branches. 
+ ;; This declaration is a bit hairy, since we've got multiple loops *within* the components block.  See this page for details on hybrids:
+ ;; http://biowiki.org/XrateFormat#Hybrid_chains
+ (&foreach 
+  category
+  (E_cons I_cons X_cons S_cons T_cons A_cons D_cons F_cons J_cons Y_cons G_cons K_cons U_cons V_cons B_cons C_cons H_cons L_cons)
+  (hybrid-chain
+   (terminal ((&cat category _ species-obs-hybrid))) ;; Name the hybrid chain based on the category it emits from.
+   (row ?) ;; We'd like the label (below) to correspond to a node name (again, see biowiki link above).
+   (components ;; Define the components of the hybrid chain - this is based on whether or not the branch is *terminal*
+    (&foreach-leaf
+     NODE
+     ((label NODE) (terminal ((&cat category _ NODE)))) ;; for branches leading to leaves - use the observation chain
+     );; end leaf
+    (&foreach-ancestor
+     NODE
+     ((label NODE) (terminal ((&cat category _ species)))) ;; for branches leading to ancestral nodes - use the species chain
+     ) ;; end ancestor
+    );; end components
+   );; end hybrid chain
+  );; end category
+ ;; Done defining hybrid chains
+ 
+ ;; **** END MARKOV CHAIN DEFINITIONS  ****
+
+ ;; **** BEGIN TOP-LEVEL PRODUCTION RULES **** 
+
+ ;; Transitions from start
+ (&foreach 
+  category
+  (E_cons I_cons X_cons S_cons T_cons A_cons D_cons F_cons J_cons Y_cons G_cons K_cons U_cons V_cons B_cons C_cons H_cons L_cons)
+  (transform  (from (START))  (to (category)) (prob (&cat START2 category)))
+  )
+ 
+;; (transform (from (START)) (to (X_cons)) (prob 1))
+ 
+ ;; START->END transition ensures that empty alignments don't have zero likelihood
+ (transform (from (START))  (to ()))
+
+ ;; Emit, end rules
+ (&foreach
+  SRC_category
+  (E_cons I_cons X_cons S_cons T_cons A_cons D_cons F_cons J_cons Y_cons G_cons K_cons U_cons V_cons B_cons C_cons H_cons L_cons)
+  ;; Each category nonterminal produces an alignment column, and then potentially ends the alignment
+  ;; Each category nonterminal emits using its specially-designed hybrid chain.
+  (transform  (from (SRC_category))  (to ((&cat SRC_category _ species-obs-hybrid) (&cat SRC_category *))))
+  (transform  (from ((&cat SRC_category *)))  (to ()))
+ )
+ 
+ ;; Production rules for transitions between categories
+ (transform (from (X_cons*)) (to (Y_cons)) (prob X_cons2Y_cons))
+ (transform (from (Y_cons*)) (to (X_cons)) (prob 1))
+ (transform (from (X_cons*)) (to (X_cons)) (prob X_cons2X_cons))
+ (transform (from (X_cons*)) (to (S_cons)) (prob X_cons2S_cons / 2))
+ (transform (from (S_cons*)) (to (E_cons)) (prob 1))
+ (transform (from (E_cons*)) (to (F_cons)) (prob E_cons2F_cons))
+ (transform (from (F_cons*)) (to (E_cons)) (prob 1))
+ (transform (from (E_cons*)) (to (E_cons)) (prob E_cons2E_cons))
+ (transform (from (E_cons*)) (to (D_cons)) (prob E_cons2D_cons))
+ (transform (from (D_cons*)) (to (I_cons)) (prob 1))
+ (transform (from (I_cons*)) (to (J_cons)) (prob I_cons2J_cons))
+ (transform (from (J_cons*)) (to (I_cons)) (prob 1))
+ (transform (from (I_cons*)) (to (I_cons)) (prob I_cons2I_cons))
+ (transform (from (I_cons*)) (to (A_cons)) (prob I_cons2A_cons))
+ (transform (from (A_cons*)) (to (E_cons)) (prob 1))
+ (transform (from (E_cons*)) (to (T_cons)) (prob E_cons2T_cons))
+ (transform (from (T_cons*)) (to (X_cons)) (prob 1))
+ 
+ (transform (from (X_cons*)) (to (U_cons)) (prob X_cons2S_cons / 2))
+ (transform (from (U_cons*)) (to (G_cons)) (prob 1))
+ (transform (from (G_cons*)) (to (H_cons)) (prob E_cons2F_cons))
+ (transform (from (H_cons*)) (to (G_cons)) (prob 1))
+ (transform (from (G_cons*)) (to (G_cons)) (prob E_cons2E_cons))
+ (transform (from (G_cons*)) (to (C_cons)) (prob E_cons2D_cons))
+ (transform (from (C_cons*)) (to (K_cons)) (prob 1))
+ (transform (from (K_cons*)) (to (L_cons)) (prob I_cons2J_cons))
+ (transform (from (L_cons*)) (to (K_cons)) (prob 1))
+ (transform (from (K_cons*)) (to (K_cons)) (prob I_cons2I_cons))
+ (transform (from (K_cons*)) (to (B_cons)) (prob I_cons2A_cons))
+ (transform (from (B_cons*)) (to (G_cons)) (prob 1))
+ (transform (from (G_cons*)) (to (V_cons)) (prob E_cons2T_cons))
+ (transform (from (V_cons*)) (to (X_cons)) (prob 1))
+
+ ) ;; end grammar geneStructure
+
+;; **** END TOP-LEVEL PRODUCTION RULES **** 
+
+(alphabet
+ (name geneStructure)
+ (token (e i x s t a d f j y g k u v b c h l))
+ (wildcard *)
+ ) ;; end alphabet geneStructure
+

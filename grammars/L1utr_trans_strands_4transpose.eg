@@ -1,0 +1,1332 @@
+;; A grammar to predict consensus gene structure based on several sources of evidence
+;; To see how the macros expand, type the following:
+;;  echo | xrate -g dart/grammars/geneStructure.eg -x expanded.eg
+;;  less expanded.eg
+
+;; Here begins the grammar.  
+(grammar
+ (name geneStructure)
+ (parametric)
+
+ ;; **** BEGIN PARAMETER DEFINITIONS  ****
+ 
+ ;; Define a seed rate to initialize the training of rate parameters
+ ;; Supposedly, setting this at a low value works best, though EM is reasonably robust. 
+ (&define SEED 0.001)
+ (&define species_SEED 0.1)
+ (&define observation_SEED 0.01)
+ 
+ ;; Probability parameters - used for initial distributions and production rules. 
+ ;; Note that each 'category' nonterminal has its own equilibrium distribution
+ ;; These are currently set as uniform - one might set this a bit more 'skewed' towards
+ ;; the type of token that a nonterminal is expected to emit. 
+ (&foreach 
+  category
+  (TSS_forward 5_forward_section 5_forward_trans 5_donor_forward 5i_forward_section 5i_forward_trans 5_acceptor_forward S_forward E0_forward_section E0_forward_trans D0_forward I0_forward_section I0_forward_trans A0_forward E1_forward_section E1_forward_trans D1_forward I1_forward_section I1_forward_trans A1_forward E2_forward_section E2_forward_trans D2_forward I2_forward_section I2_forward_trans A2_forward T_forward 3_forward_section 3_forward_trans 3_donor_forward 3i_forward_section 3i_forward_trans 3_acceptor_forward TTS_forward TSS_reverse 5_reverse_section 5_reverse_trans 5_donor_reverse 5i_reverse_section 5i_reverse_trans 5_acceptor_reverse S_reverse E0_reverse_section E0_reverse_trans D0_reverse I0_reverse_section I0_reverse_trans A0_reverse E1_reverse_section E1_reverse_trans D1_reverse I1_reverse_section I1_reverse_trans A1_reverse E2_reverse_section E2_reverse_trans D2_reverse I2_reverse_section I2_reverse_trans A2_reverse T_reverse 3_reverse_section 3_reverse_trans 3_donor_reverse 3i_reverse_section 3i_reverse_trans 3_acceptor_reverse TTS_reverse X_section X_trans)
+  (&foreach-token TOK 
+   (&if
+    (&or
+	 (&and (&eq category X_section) (&eq TOK x))
+	 (&and (&eq category X_trans) (&eq TOK X))
+	 
+     (&and (&eq category TSS_forward) (&eq TOK {))
+	 (&and (&eq category TSS_reverse) (&eq TOK [))
+     (&and (&eq category 5_forward_section) (&eq TOK 5))
+	 (&and (&eq category 5_reverse_section) (&eq TOK &))
+     (&and (&eq category 5_forward_trans) (&eq TOK 6))
+	 (&and (&eq category 5_reverse_trans) (&eq TOK '))
+     (&and (&eq category 5_donor_forward) (&eq TOK ~))
+	 (&and (&eq category 5_donor_reverse) (&eq TOK ^))
+     (&and (&eq category 5i_forward_section) (&eq TOK h))
+	 (&and (&eq category 5i_reverse_section) (&eq TOK H))
+     (&and (&eq category 5i_forward_trans) (&eq TOK l))
+	 (&and (&eq category 5i_reverse_trans) (&eq TOK L))
+     (&and (&eq category 5_acceptor_forward) (&eq TOK |))
+	 (&and (&eq category 5_acceptor_reverse) (&eq TOK \))
+	 
+     (&and (&eq category E0_forward_section) (&eq TOK e))
+	 (&and (&eq category E0_forward_trans) (&eq TOK p))
+	 (&and (&eq category E1_forward_section) (&eq TOK f))
+	 (&and (&eq category E1_forward_trans) (&eq TOK q))
+     (&and (&eq category E2_forward_section) (&eq TOK g))
+	 (&and (&eq category E2_forward_trans) (&eq TOK r))
+     (&and (&eq category I0_forward_section) (&eq TOK i))
+	 (&and (&eq category I0_forward_trans) (&eq TOK u))
+	 (&and (&eq category I1_forward_section) (&eq TOK j))
+	 (&and (&eq category I1_forward_trans) (&eq TOK v))
+     (&and (&eq category I2_forward_section) (&eq TOK k))
+	 (&and (&eq category I2_forward_trans) (&eq TOK w))
+	 
+	 (&and (&eq category E0_reverse_section) (&eq TOK E))
+	 (&and (&eq category E0_reverse_trans) (&eq TOK P))
+	 (&and (&eq category E1_reverse_section) (&eq TOK F))
+	 (&and (&eq category E1_reverse_trans) (&eq TOK Q))
+     (&and (&eq category E2_reverse_section) (&eq TOK G))
+	 (&and (&eq category E2_reverse_trans) (&eq TOK R))
+     (&and (&eq category I0_reverse_section) (&eq TOK I))
+	 (&and (&eq category I0_reverse_trans) (&eq TOK U))
+	 (&and (&eq category I1_reverse_section) (&eq TOK J))
+	 (&and (&eq category I1_reverse_trans) (&eq TOK V))
+     (&and (&eq category I2_reverse_section) (&eq TOK K))
+	 (&and (&eq category I2_reverse_trans) (&eq TOK W))
+	 
+	 (&and (&eq category TTS_forward) (&eq TOK }))
+	 (&and (&eq category TTS_reverse) (&eq TOK ]))
+     (&and (&eq category 3_forward_section) (&eq TOK 3))
+	 (&and (&eq category 3_reverse_section) (&eq TOK $))
+     (&and (&eq category 3_forward_trans) (&eq TOK 4))
+	 (&and (&eq category 3_reverse_trans) (&eq TOK %))
+     (&and (&eq category 3_donor_forward) (&eq TOK z))
+	 (&and (&eq category 3_donor_reverse) (&eq TOK Z))
+     (&and (&eq category 3i_forward_section) (&eq TOK m))
+	 (&and (&eq category 3i_reverse_section) (&eq TOK M))
+     (&and (&eq category 3i_forward_trans) (&eq TOK y))
+	 (&and (&eq category 3i_reverse_trans) (&eq TOK Y))
+     (&and (&eq category 3_acceptor_forward) (&eq TOK ?))
+	 (&and (&eq category 3_acceptor_reverse) (&eq TOK 0))
+	 
+	 (&and (&eq category S_forward) (&eq TOK s))
+	 (&and (&eq category T_forward) (&eq TOK t))
+	 (&and (&eq category A0_forward) (&eq TOK a))
+	 (&and (&eq category A1_forward) (&eq TOK b))
+	 (&and (&eq category A2_forward) (&eq TOK c))
+	 (&and (&eq category D0_forward) (&eq TOK d))
+	 (&and (&eq category D1_forward) (&eq TOK o))
+	 (&and (&eq category D2_forward) (&eq TOK n))
+	 
+	 (&and (&eq category S_reverse) (&eq TOK S))
+	 (&and (&eq category T_reverse) (&eq TOK T))
+	 (&and (&eq category A0_reverse) (&eq TOK A))
+	 (&and (&eq category A1_reverse) (&eq TOK B))
+	 (&and (&eq category A2_reverse) (&eq TOK C))
+	 (&and (&eq category D0_reverse) (&eq TOK D))
+	 (&and (&eq category D1_reverse) (&eq TOK O))
+	 (&and (&eq category D2_reverse) (&eq TOK N))
+    ) ;; end or
+    (const (((&cat p_ category _ TOK) 1 ))) ;; if true
+    (const (((&cat p_ category _ TOK) 0 ))) ;; if false
+	) ;; end if
+   ) ;; end TOK
+  ) ;; end category
+  
+  (pgroup
+   ;; Initial distribution over categories as governed by the start -> category transitions
+   (
+    (&foreach
+	 category
+	 (TSS_forward 5_forward_section 5_forward_trans 5_donor_forward 5i_forward_section 5i_forward_trans 5_acceptor_forward S_forward E0_forward_section E0_forward_trans D0_forward I0_forward_section I0_forward_trans A0_forward E1_forward_section E1_forward_trans D1_forward I1_forward_section I1_forward_trans A1_forward E2_forward_section E2_forward_trans D2_forward I2_forward_section I2_forward_trans A2_forward T_forward 3_forward_section 3_forward_trans 3_donor_forward 3i_forward_section 3i_forward_trans 3_acceptor_forward TTS_forward TSS_reverse 5_reverse_section 5_reverse_trans 5_donor_reverse 5i_reverse_section 5i_reverse_trans 5_acceptor_reverse S_reverse E0_reverse_section E0_reverse_trans D0_reverse I0_reverse_section I0_reverse_trans A0_reverse E1_reverse_section E1_reverse_trans D1_reverse I1_reverse_section I1_reverse_trans A1_reverse E2_reverse_section E2_reverse_trans D2_reverse I2_reverse_section I2_reverse_trans A2_reverse T_reverse 3_reverse_section 3_reverse_trans 3_donor_reverse 3i_reverse_section 3i_reverse_trans 3_acceptor_reverse TTS_reverse X_section X_trans)
+	 ((&cat START2 category) 1) 
+	 ) ;; end foreach
+	)
+  ) ;; end pgroup
+  
+ (pgroup
+    ;; Probabilities of going from / staying in a given category at the CONSENSUS (e.g. root) level
+  ((E_section2E_section .25) (E_section2E_trans .25) (E2I0 .083) (E2I1 .083) (E2I2 .084) (E2X .25))
+  ((I_section2I_section .34) (I2E .33) (I_section2I_trans .33))
+  ((X_section2X_section .25) (X2E .25) (X2utr .25) (X_section2X_trans .25))
+  ((T2UTR .5) (T2X .5))
+  ((5_section25_section .25) (5_section25_trans .25) (525i .25) (52E .25))
+  ((5i_section25i_trans .34) (5i_section25i_section .33) (5i25 .33))
+  ((3_section23_section .25) (3_section23_trans .25) (323i .25) (32X .25))
+  ((3i_section23i_trans .34) (3i_section23i_section .33) (3i23 .33))
+  
+ ) ;; end pgroup
+  
+ ;; Rate parameters - one set governs the inter-species changes and another the 'observation' 
+ ;; These are (for now) shared among the different chains used by the {E,I,X}_cons nonterminals
+ (&foreach 
+  TYPE 
+  (species)
+  (&foreach 
+   SRC
+   (e f g i j k 5 h 3 m)
+   (&foreach
+    DEST
+    (e f g i j k 5 h 3 m E F G I J K $ H & M x)
+    (&if 
+     (&eq SRC DEST) 
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+  
+  (&foreach 
+  TYPE 
+  (species)
+  (&foreach 
+   SRC
+   (x)
+   (&foreach 
+    DEST
+    (e f g i j k 5 h 3 m)
+    (&if 
+     (&eq SRC DEST) 
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+
+ (&foreach
+  TYPE
+  (species)
+  (&foreach
+   SRC
+   (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+   (&foreach
+    DEST
+    (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? S T A B C D O N P Q R U V W % 0 Z Y \ ' L ^ X  [ ] { })
+    (&if
+     (&eq SRC DEST)
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+  
+ (&foreach
+  TYPE
+  (species)
+  (&foreach
+   SRC
+   (X)
+   (&foreach
+    DEST
+    (s t a b c d o n p q r u v w 6 ~ l | 4 y z ?  { })
+    (&if
+     (&eq SRC DEST)
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+  
+ (&foreach-leaf
+  TYPE 
+  (&foreach 
+   SRC
+   (e f g i j k 5 h 3 m)
+   (&foreach 
+    DEST
+    (e f g i j k 5 h 3 m E F G I J K $ H & M x)
+    (&if 
+     (&eq SRC DEST) 
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+  
+ (&foreach-leaf
+  TYPE 
+  (&foreach 
+   SRC
+   (x)
+   (&foreach 
+    DEST
+    (e f g i j k 5 h 3 m)
+    (&if 
+     (&eq SRC DEST) 
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+
+ (&foreach-leaf
+  TYPE
+  (&foreach
+   SRC
+   (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+   (&foreach
+    DEST
+    (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? S T A B C D O N P Q R U V W % 0 Z Y \ ' L ^ X [ ] { })
+    (&if
+     (&eq SRC DEST)
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+  
+ (&foreach-leaf
+  TYPE
+  (&foreach
+   SRC
+   (X)
+   (&foreach
+    DEST
+    (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+    (&if
+     (&eq SRC DEST)
+     ()
+     (rate ((&cat TYPE _ SRC _ DEST) (&cat SEED) ) ) )
+    ) ;; end DEST
+   ) ;; end SRC
+  ) ;; end TYPE
+
+
+ ;; **** END PARAMETER DEFINITIONS  ****
+
+ ;; **** BEGIN MARKOV CHAIN DEFINITIONS  ****
+
+ ;; Define species_chain and observation_chain
+ ;; These are identical in form, but they have separate parametrizations
+ (&foreach 
+  category 
+  (TSS_forward 5_forward_section 5_forward_trans 5_donor_forward 5i_forward_section 5i_forward_trans 5_acceptor_forward S_forward E0_forward_section E0_forward_trans D0_forward I0_forward_section I0_forward_trans A0_forward E1_forward_section E1_forward_trans D1_forward I1_forward_section I1_forward_trans A1_forward E2_forward_section E2_forward_trans D2_forward I2_forward_section I2_forward_trans A2_forward T_forward 3_forward_section 3_forward_trans 3_donor_forward 3i_forward_section 3i_forward_trans 3_acceptor_forward TTS_forward TSS_reverse 5_reverse_section 5_reverse_trans 5_donor_reverse 5i_reverse_section 5i_reverse_trans 5_acceptor_reverse S_reverse E0_reverse_section E0_reverse_trans D0_reverse I0_reverse_section I0_reverse_trans A0_reverse E1_reverse_section E1_reverse_trans D1_reverse I1_reverse_section I1_reverse_trans A1_reverse E2_reverse_section E2_reverse_trans D2_reverse I2_reverse_section I2_reverse_trans A2_reverse T_reverse 3_reverse_section 3_reverse_trans 3_donor_reverse 3i_reverse_section 3i_reverse_trans 3_acceptor_reverse TTS_reverse X_section X_trans)
+  (&foreach
+   TYPE
+   (species)
+   ;; Define the Markov chains for residue substitution ( i - e - x )
+   ;; There are two of these for each category - one for species-level evo and one observations
+   (chain
+    (update-policy parametric)
+    (terminal ((&cat category _ TYPE)))
+    
+    ;; Initial probability distributions - call forth the parameters declared in the pgroup block above
+    (&foreach-token
+     TOK
+     (initial (state (TOK)) (prob (&cat p_ category _ TOK)))
+     )
+    
+    ;; Mutation rates - simply call forth the parameters declared in the rate blocks above
+	
+	 (&foreach 
+	  SRC
+	  (e f g i j k 5 h 3 m)
+	  (&foreach 
+	   DEST
+	   (e f g i j k 5 h 3 m)
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord SRC) 65)
+			(&chr (&sub (&ord SRC) 15) )
+			(&chr (&sub (&ord SRC) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   	   
+	   (mutate
+		(from
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end from
+		(to (DEST))
+		(rate (&cat TYPE _ SRC _ (&if (&lt (&ord DEST) 65) (&chr (&sub (&ord DEST) 15) ) (&chr (&sub (&ord DEST) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	   (mutate
+	    (from (DEST))
+		(to
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end to
+		(rate (&cat TYPE _ DEST _ (&if (&lt (&ord SRC) 65) (&chr (&sub (&ord SRC) 15) ) (&chr (&sub (&ord SRC) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (x)
+	  (&foreach 
+	   DEST
+	   (e f g i j k 5 h 3 m)
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (DEST)) (to (SRC)) (rate (&cat TYPE _ DEST _ SRC) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from (SRC))
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to (SRC))
+		 (rate (&cat TYPE _ DEST _ SRC) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	  (&foreach 
+	   DEST
+	   (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	   	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord SRC) 65)
+			(&chr (&sub (&ord SRC) 15) )
+			(&chr (&sub (&ord SRC) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ SRC _ DEST))
+		) ;; end mutate
+	   ) ;; end if
+	   	   
+	   (mutate
+		(from
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end from
+		(to (DEST))
+		(rate (&cat TYPE _ SRC _ (&if (&lt (&ord DEST) 65) (&chr (&sub (&ord DEST) 15) ) (&chr (&sub (&ord DEST) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	   (mutate
+	    (from (DEST))
+		(to
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end to
+		(rate (&cat TYPE _ DEST _ (&if (&lt (&ord SRC) 65) (&chr (&sub (&ord SRC) 15) ) (&chr (&sub (&ord SRC) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (X)
+	  (&foreach 
+	   DEST
+	   (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (DEST)) (to (SRC)) (rate (&cat TYPE _ DEST _ SRC) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from (SRC))
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to (SRC))
+		 (rate (&cat TYPE _ DEST _ SRC) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC	
+	  
+    ) ;; end chain
+   ) ;; end types
+  ) ;; end categories
+  
+ (&foreach 
+  category 
+  (TSS_forward 5_forward_section 5_forward_trans 5_donor_forward 5i_forward_section 5i_forward_trans 5_acceptor_forward S_forward E0_forward_section E0_forward_trans D0_forward I0_forward_section I0_forward_trans A0_forward E1_forward_section E1_forward_trans D1_forward I1_forward_section I1_forward_trans A1_forward E2_forward_section E2_forward_trans D2_forward I2_forward_section I2_forward_trans A2_forward T_forward 3_forward_section 3_forward_trans 3_donor_forward 3i_forward_section 3i_forward_trans 3_acceptor_forward TTS_forward TSS_reverse 5_reverse_section 5_reverse_trans 5_donor_reverse 5i_reverse_section 5i_reverse_trans 5_acceptor_reverse S_reverse E0_reverse_section E0_reverse_trans D0_reverse I0_reverse_section I0_reverse_trans A0_reverse E1_reverse_section E1_reverse_trans D1_reverse I1_reverse_section I1_reverse_trans A1_reverse E2_reverse_section E2_reverse_trans D2_reverse I2_reverse_section I2_reverse_trans A2_reverse T_reverse 3_reverse_section 3_reverse_trans 3_donor_reverse 3i_reverse_section 3i_reverse_trans 3_acceptor_reverse TTS_reverse X_section X_trans)
+  (&foreach
+   TYPE
+   (species)
+   ;; Define the Markov chains for residue substitution ( i - e - x )
+   ;; There are two of these for each category - one for species-level evo and one observations
+   (chain
+    (update-policy parametric)
+    (terminal ((&cat category _ reverse)))
+    
+    ;; Initial probability distributions - call forth the parameters declared in the pgroup block above
+    (&foreach-token
+     TOK
+     (initial (state (TOK)) (prob (&cat p_ category _ TOK)))
+     )
+    
+    ;; Mutation rates - simply call forth the parameters declared in the rate blocks above
+	
+	 (&foreach 
+	  SRC
+	  (e f g i j k 5 h 3 m)
+	  (&foreach 
+	   DEST
+	   (e f g i j k 5 h 3 m)
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ DEST _ SRC) ) )
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord SRC) 65)
+			(&chr (&sub (&ord SRC) 15) )
+			(&chr (&sub (&ord SRC) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ DEST _ SRC) )
+		) ;; end mutate
+	   ) ;; end if
+	   	   
+	   (mutate
+		(from
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end from
+		(to (DEST))
+		(rate (&cat TYPE _ DEST _ (&if (&lt (&ord SRC) 65) (&chr (&sub (&ord SRC) 15) ) (&chr (&sub (&ord SRC) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	   (mutate
+	    (from (DEST))
+		(to
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end to
+		(rate (&cat TYPE _ SRC _ (&if (&lt (&ord DEST) 65) (&chr (&sub (&ord DEST) 15) ) (&chr (&sub (&ord DEST) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (x)
+	  (&foreach 
+	   DEST
+	   (e f g i j k 5 h 3 m)
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ DEST _ SRC) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (DEST)) (to (SRC)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from (SRC))
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ DEST _ SRC) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to (SRC))
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	  (&foreach 
+	   DEST
+	   (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	   	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ DEST _ SRC) ) )
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord SRC) 65)
+			(&chr (&sub (&ord SRC) 15) )
+			(&chr (&sub (&ord SRC) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ DEST _ SRC))
+		) ;; end mutate
+	   ) ;; end if
+	   	   
+	   (mutate
+		(from
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end from
+		(to (DEST))
+		(rate (&cat TYPE _ DEST _ (&if (&lt (&ord SRC) 65) (&chr (&sub (&ord SRC) 15) ) (&chr (&sub (&ord SRC) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	   (mutate
+	    (from (DEST))
+		(to
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end to
+		(rate (&cat TYPE _ SRC _ (&if (&lt (&ord DEST) 65) (&chr (&sub (&ord DEST) 15) ) (&chr (&sub (&ord DEST) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (X)
+	  (&foreach 
+	   DEST
+	   (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ DEST _ SRC) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (DEST)) (to (SRC)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from (SRC))
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ DEST _ SRC) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to (SRC))
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC	
+	  
+    ) ;; end chain
+   ) ;; end types
+  ) ;; end categories
+
+  
+  (&foreach-leaf
+   TYPE
+   ;; Define the Markov chains for residue substitution ( i - e - x )
+   ;; There are two of these for each category - one for species-level evo and one observations
+   (chain
+    (update-policy parametric)
+    (terminal ((&cat chain_ TYPE)))
+    
+    ;; Initial probability distributions - call forth the parameters declared in the pgroup block above
+    (&foreach-token
+     TOK
+     (initial (state (TOK)) (prob 1))
+     )
+    
+    ;; Mutation rates - simply call forth the parameters declared in the rate blocks above
+	
+	 (&foreach 
+	  SRC
+	  (e f g i j k 5 h 3 m)
+	  (&foreach 
+	   DEST
+	   (e f g i j k 5 h 3 m)
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord SRC) 65)
+			(&chr (&sub (&ord SRC) 15) )
+			(&chr (&sub (&ord SRC) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   	   
+	   (mutate
+		(from
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end from
+		(to (DEST))
+		(rate (&cat TYPE _ SRC _ (&if (&lt (&ord DEST) 65) (&chr (&sub (&ord DEST) 15) ) (&chr (&sub (&ord DEST) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	   (mutate
+	    (from (DEST))
+		(to
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end to
+		(rate (&cat TYPE _ DEST _ (&if (&lt (&ord SRC) 65) (&chr (&sub (&ord SRC) 15) ) (&chr (&sub (&ord SRC) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (x)
+	  (&foreach 
+	   DEST
+	   (e f g i j k 5 h 3 m)
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (DEST)) (to (SRC)) (rate (&cat TYPE _ DEST _ SRC) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from (SRC))
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to (SRC))
+		 (rate (&cat TYPE _ DEST _ SRC) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	  (&foreach 
+	   DEST
+	   (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	   	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord SRC) 65)
+			(&chr (&sub (&ord SRC) 15) )
+			(&chr (&sub (&ord SRC) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   	   
+	   (mutate
+		(from
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end from
+		(to (DEST))
+		(rate (&cat TYPE _ SRC _ (&if (&lt (&ord DEST) 65) (&chr (&sub (&ord DEST) 15) ) (&chr (&sub (&ord DEST) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	   (mutate
+	    (from (DEST))
+		(to
+		 (
+		  (&if
+		   (&lt (&ord SRC) 65)
+		   (&chr (&sub (&ord SRC) 15) )
+		   (&chr (&sub (&ord SRC) 32) )
+		  ) ;; end if
+		 ) 
+		) ;; end from
+		(rate (&cat TYPE _ DEST _ (&if (&lt (&ord SRC) 65) (&chr (&sub (&ord SRC) 15) ) (&chr (&sub (&ord SRC) 32) ) ) ) )
+	   ) ;; end mutate
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC
+	 
+	 (&foreach 
+	  SRC
+	  (X)
+	  (&foreach 
+	   DEST
+	   (s t a b c d o n p q r u v w 6 ~ l | 4 y z ? { })
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (SRC)) (to (DEST)) (rate (&cat TYPE _ SRC _ DEST) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+	    (mutate (from (DEST)) (to (SRC)) (rate (&cat TYPE _ DEST _ SRC) ) )
+	   )
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from (SRC))
+		 (to
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end to
+		 (rate (&cat TYPE _ SRC _ DEST) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	   (&if 
+		(&eq SRC DEST) 
+		()
+		(mutate
+		 (from
+		  (
+		   (&if
+		    (&lt (&ord DEST) 65)
+			(&chr (&sub (&ord DEST) 15) )
+			(&chr (&sub (&ord DEST) 32) )
+		   ) ;; end if
+	      ) 
+		 ) ;; end from
+		 (to (SRC))
+		 (rate (&cat TYPE _ DEST _ SRC) )
+		) ;; end mutate
+	   ) ;; end if
+	   
+	  ) ;; end DEST
+	 ) ;; end SRC	
+	  
+    ) ;; end chain
+   ) ;; end types
+  
+ ;; Done defining regular chains
+
+ 
+ ;; Define the hybrid chains, which are composed of a category_species chain and a category_observation components
+ ;; The observation chain models transitions on terminal branches (leading to "leaves") 
+ ;; and the species chain models transitions on the internal branches. 
+ ;; This declaration is a bit hairy, since we've got multiple loops *within* the components block.  See this page for details on hybrids:
+ ;; http://biowiki.org/XrateFormat#Hybrid_chains
+ (&foreach 
+  category
+  (TSS_forward 5_forward_section 5_forward_trans 5_donor_forward 5i_forward_section 5i_forward_trans 5_acceptor_forward S_forward E0_forward_section E0_forward_trans D0_forward I0_forward_section I0_forward_trans A0_forward E1_forward_section E1_forward_trans D1_forward I1_forward_section I1_forward_trans A1_forward E2_forward_section E2_forward_trans D2_forward I2_forward_section I2_forward_trans A2_forward T_forward 3_forward_section 3_forward_trans 3_donor_forward 3i_forward_section 3i_forward_trans 3_acceptor_forward TTS_forward TSS_reverse 5_reverse_section 5_reverse_trans 5_donor_reverse 5i_reverse_section 5i_reverse_trans 5_acceptor_reverse S_reverse E0_reverse_section E0_reverse_trans D0_reverse I0_reverse_section I0_reverse_trans A0_reverse E1_reverse_section E1_reverse_trans D1_reverse I1_reverse_section I1_reverse_trans A1_reverse E2_reverse_section E2_reverse_trans D2_reverse I2_reverse_section I2_reverse_trans A2_reverse T_reverse 3_reverse_section 3_reverse_trans 3_donor_reverse 3i_reverse_section 3i_reverse_trans 3_acceptor_reverse TTS_reverse X_section X_trans)
+  (hybrid-chain
+   (terminal ((&cat category _ -hybrid))) ;; Name the hybrid chain based on the category it emits from.
+   (row ?) ;; We'd like the label (below) to correspond to a node name (again, see biowiki link above).
+   (components ;; Define the components of the hybrid chain - this is based on whether or not the branch is *terminal*
+    (&foreach-leaf
+     NODE
+     ((label NODE) (terminal ((&cat chain_ NODE)))) ;; for branches leading to leaves - use the observation chain
+     );; end leaf
+    (&foreach-ancestor
+     NODE
+     ((label NODE) (terminal ((&cat category _ species)))) ;; for branches leading to ancestral nodes - use the species chain
+     ) ;; end ancestor
+    );; end components
+   );; end hybrid chain
+  );; end category
+ ;; Done defining hybrid chains
+ 
+ ;; **** END MARKOV CHAIN DEFINITIONS  ****
+
+ ;; **** BEGIN TOP-LEVEL PRODUCTION RULES **** 
+
+ ;; Transitions from start
+ (&foreach 
+  category
+  (TSS_forward 5_forward_section 5_forward_trans 5_donor_forward 5i_forward_section 5i_forward_trans 5_acceptor_forward S_forward E0_forward_section E0_forward_trans D0_forward I0_forward_section I0_forward_trans A0_forward E1_forward_section E1_forward_trans D1_forward I1_forward_section I1_forward_trans A1_forward E2_forward_section E2_forward_trans D2_forward I2_forward_section I2_forward_trans A2_forward T_forward 3_forward_section 3_forward_trans 3_donor_forward 3i_forward_section 3i_forward_trans 3_acceptor_forward TTS_forward TSS_reverse 5_reverse_section 5_reverse_trans 5_donor_reverse 5i_reverse_section 5i_reverse_trans 5_acceptor_reverse S_reverse E0_reverse_section E0_reverse_trans D0_reverse I0_reverse_section I0_reverse_trans A0_reverse E1_reverse_section E1_reverse_trans D1_reverse I1_reverse_section I1_reverse_trans A1_reverse E2_reverse_section E2_reverse_trans D2_reverse I2_reverse_section I2_reverse_trans A2_reverse T_reverse 3_reverse_section 3_reverse_trans 3_donor_reverse 3i_reverse_section 3i_reverse_trans 3_acceptor_reverse TTS_reverse X_section X_trans)
+  (transform  (from (START))  (to (category)) (prob (&cat START2 category)))
+  )
+  
+ ;; START->END transition ensures that empty alignments don't have zero likelihood
+ (transform (from (START))  (to ()))
+
+ ;; Emit, end rules
+ (&foreach
+  SRC_category
+  (TSS_forward 5_forward_section 5_forward_trans 5_donor_forward 5i_forward_section 5i_forward_trans 5_acceptor_forward S_forward E0_forward_section E0_forward_trans D0_forward I0_forward_section I0_forward_trans A0_forward E1_forward_section E1_forward_trans D1_forward I1_forward_section I1_forward_trans A1_forward E2_forward_section E2_forward_trans D2_forward I2_forward_section I2_forward_trans A2_forward T_forward 3_forward_section 3_forward_trans 3_donor_forward 3i_forward_section 3i_forward_trans 3_acceptor_forward TTS_forward TSS_reverse 5_reverse_section 5_reverse_trans 5_donor_reverse 5i_reverse_section 5i_reverse_trans 5_acceptor_reverse S_reverse E0_reverse_section E0_reverse_trans D0_reverse I0_reverse_section I0_reverse_trans A0_reverse E1_reverse_section E1_reverse_trans D1_reverse I1_reverse_section I1_reverse_trans A1_reverse E2_reverse_section E2_reverse_trans D2_reverse I2_reverse_section I2_reverse_trans A2_reverse T_reverse 3_reverse_section 3_reverse_trans 3_donor_reverse 3i_reverse_section 3i_reverse_trans 3_acceptor_reverse TTS_reverse X_section X_trans)
+  ;; Each category nonterminal produces an alignment column, and then potentially ends the alignment
+  ;; Each category nonterminal emits using its specially-designed hybrid chain.
+  (transform  (from (SRC_category))  (to ((&cat SRC_category _ -hybrid) (&cat SRC_category *))))
+  (transform  (from ((&cat SRC_category *)))  (to ()))
+ )
+ 
+ ;; Production rules for transitions between categories
+ (transform (from (S_reverse*)) (to (X_section)) (prob T2X))
+ (transform (from (TSS_reverse*)) (to (X_section)))
+ (transform (from (T_forward*)) (to (X_section)) (prob T2X))
+ (transform (from (TTS_forward*)) (to (X_section)))
+ (transform (from (X_section*)) (to (X_trans)) (prob X_section2X_trans))
+ (transform (from (X_trans*)) (to (X_section)))
+ (transform (from (X_section*)) (to (X_section)) (prob X_section2X_section))
+ (transform (from (X_section*)) (to (S_forward)) (prob X2E / 2))
+ (transform (from (X_section*)) (to (T_reverse)) (prob X2E / 2))
+ (transform (from (X_section*)) (to (TSS_forward)) (prob X2utr / 2))
+ (transform (from (X_section*)) (to (TTS_reverse)) (prob X2utr / 2))
+ 
+ (transform (from (TSS_forward*)) (to (5_forward_section)))
+ (transform (from (5_acceptor_forward*)) (to (5_forward_section)))
+ (transform (from (5_forward_section*)) (to (5_forward_trans)) (prob 5_section25_trans))
+ (transform (from (5_forward_trans*)) (to (5_forward_section)))
+ (transform (from (5_forward_section*)) (to (5_forward_section)) (prob 5_section25_section))
+ (transform (from (5_forward_section*)) (to (5_donor_forward)) (prob 525i))
+ (transform (from (5_forward_section*)) (to (S_forward)) (prob 52E))
+ 
+ (transform (from (5_donor_forward*)) (to (5i_forward_section)))
+ (transform (from (5i_forward_section*)) (to (5i_forward_trans)) (prob 5i_section25i_trans))
+ (transform (from (5i_forward_trans*)) (to (5i_forward_section)))
+ (transform (from (5i_forward_section*)) (to (5i_forward_section)) (prob 5i_section25i_section))
+ (transform (from (5i_forward_section*)) (to (5_acceptor_forward)) (prob 5i25))
+ 
+ (transform (from (S_forward*)) (to (E0_forward_section)))
+ (transform (from (A0_forward*)) (to (E0_forward_section)))
+ (transform (from (E0_forward_section*)) (to (E0_forward_trans)) (prob E_section2E_trans))
+ (transform (from (E0_forward_trans*)) (to (E0_forward_section)) (prob 1))
+ (transform (from (E0_forward_section*)) (to (E0_forward_section)) (prob E_section2E_section))
+ (transform (from (E0_forward_section*)) (to (D0_forward)) (prob E2I0))
+ (transform (from (E0_forward_section*)) (to (D1_forward)) (prob E2I1))
+ (transform (from (E0_forward_section*)) (to (D2_forward)) (prob E2I2))
+ (transform (from (E0_forward_section*)) (to (T_forward)) (prob E2X))
+ 
+ (transform (from (A1_forward*)) (to (E1_forward_section)))
+ (transform (from (E1_forward_section*)) (to (E1_forward_trans)) (prob E_section2E_trans))
+ (transform (from (E1_forward_trans*)) (to (E1_forward_section)))
+ (transform (from (E1_forward_section*)) (to (E1_forward_section)) (prob E_section2E_section))
+ (transform (from (E1_forward_section*)) (to (D0_forward)) (prob E2I0))
+ (transform (from (E1_forward_section*)) (to (D1_forward)) (prob E2I1))
+ (transform (from (E1_forward_section*)) (to (D2_forward)) (prob E2I2))
+ (transform (from (E1_forward_section*)) (to (T_forward)) (prob E2X))
+ 
+ (transform (from (A2_forward*)) (to (E2_forward_section)))
+ (transform (from (E2_forward_section*)) (to (E2_forward_trans)) (prob E_section2E_trans))
+ (transform (from (E2_forward_trans*)) (to (E2_forward_section)))
+ (transform (from (E2_forward_section*)) (to (E2_forward_section)) (prob E_section2E_section))
+ (transform (from (E2_forward_section*)) (to (D0_forward)) (prob E2I0))
+ (transform (from (E2_forward_section*)) (to (D1_forward)) (prob E2I1))
+ (transform (from (E2_forward_section*)) (to (D2_forward)) (prob E2I2))
+ (transform (from (E2_forward_section*)) (to (T_forward)) (prob E2X))
+ 
+ (transform (from (D0_forward*)) (to (I0_forward_section)))
+ (transform (from (I0_forward_section*)) (to (I0_forward_trans)) (prob I_section2I_trans))
+ (transform (from (I0_forward_trans*)) (to (I0_forward_section)))
+ (transform (from (I0_forward_section*)) (to (I0_forward_section)) (prob I_section2I_section))
+ (transform (from (I0_forward_section*)) (to (A0_forward)) (prob I2E))
+ 
+ (transform (from (D1_forward*)) (to (I1_forward_section)))
+ (transform (from (I1_forward_section*)) (to (I1_forward_trans)) (prob I_section2I_trans))
+ (transform (from (I1_forward_trans*)) (to (I1_forward_section)))
+ (transform (from (I1_forward_section*)) (to (I1_forward_section)) (prob I_section2I_section))
+ (transform (from (I1_forward_section*)) (to (A1_forward)) (prob I2E))
+ 
+ (transform (from (D2_forward*)) (to (I2_forward_section)))
+ (transform (from (I2_forward_section*)) (to (I2_forward_trans)) (prob I_section2I_trans))
+ (transform (from (I2_forward_trans*)) (to (I2_forward_section)))
+ (transform (from (I2_forward_section*)) (to (I2_forward_section)) (prob I_section2I_section))
+ (transform (from (I2_forward_section*)) (to (A2_forward)) (prob I2E))
+ 
+ (transform (from (T_forward*)) (to (3_forward_section)) (prob T2UTR))
+ (transform (from (3_acceptor_forward*)) (to (3_forward_section)))
+ (transform (from (3_forward_section*)) (to (3_forward_trans)) (prob 3_section23_trans))
+ (transform (from (3_forward_trans*)) (to (3_forward_section)))
+ (transform (from (3_forward_section*)) (to (3_forward_section)) (prob 3_section23_section))
+ (transform (from (3_forward_section*)) (to (3_donor_forward)) (prob 323i))
+ (transform (from (3_forward_section*)) (to (TTS_forward)) (prob 32X))
+ 
+ (transform (from (3_donor_forward*)) (to (3i_forward_section)))
+ (transform (from (3i_forward_section*)) (to (3i_forward_trans)) (prob 3i_section23i_trans))
+ (transform (from (3i_forward_trans*)) (to (3i_forward_section)))
+ (transform (from (3i_forward_section*)) (to (3i_forward_section)) (prob 3i_section23i_section))
+ (transform (from (3i_forward_section*)) (to (3_acceptor_forward)) (prob 3i23))
+ 
+ 
+
+ (transform (from (TTS_reverse*)) (to (3_reverse_section)))
+ (transform (from (3_donor_reverse*)) (to (3_reverse_section)))
+ (transform (from (3_reverse_section*)) (to (3_reverse_trans)) (prob 5_section25_trans))
+ (transform (from (3_reverse_trans*)) (to (3_reverse_section)))
+ (transform (from (3_reverse_section*)) (to (3_reverse_section)) (prob 5_section25_section))
+ (transform (from (3_reverse_section*)) (to (3_acceptor_reverse)) (prob 525i))
+ (transform (from (3_reverse_section*)) (to (T_reverse)) (prob 52E))
+ 
+ (transform (from (3_acceptor_reverse*)) (to (3i_reverse_section)))
+ (transform (from (3i_reverse_section*)) (to (3i_reverse_trans)) (prob 5i_section25i_trans))
+ (transform (from (3i_reverse_trans*)) (to (3i_reverse_section)))
+ (transform (from (3i_reverse_section*)) (to (3i_reverse_section)) (prob 5i_section25i_section))
+ (transform (from (3i_reverse_section*)) (to (3_donor_reverse)) (prob 5i25))
+
+ (transform (from (T_reverse*)) (to (E0_reverse_section)))
+ (transform (from (D0_reverse*)) (to (E0_reverse_section)))
+ (transform (from (E0_reverse_section*)) (to (E0_reverse_trans)) (prob E_section2E_trans))
+ (transform (from (E0_reverse_trans*)) (to (E0_reverse_section)) (prob 1))
+ (transform (from (E0_reverse_section*)) (to (E0_reverse_section)) (prob E_section2E_section))
+ (transform (from (E0_reverse_section*)) (to (A0_reverse)) (prob E2I0))
+ (transform (from (E0_reverse_section*)) (to (A1_reverse)) (prob E2I1))
+ (transform (from (E0_reverse_section*)) (to (A2_reverse)) (prob E2I2))
+ (transform (from (E0_reverse_section*)) (to (S_reverse)) (prob E2X))
+ 
+ (transform (from (D1_reverse*)) (to (E1_reverse_section)))
+ (transform (from (E1_reverse_section*)) (to (E1_reverse_trans)) (prob E_section2E_trans))
+ (transform (from (E1_reverse_trans*)) (to (E1_reverse_section)))
+ (transform (from (E1_reverse_section*)) (to (E1_reverse_section)) (prob E_section2E_section))
+ (transform (from (E1_reverse_section*)) (to (A0_reverse)) (prob E2I0))
+ (transform (from (E1_reverse_section*)) (to (A1_reverse)) (prob E2I1))
+ (transform (from (E1_reverse_section*)) (to (A2_reverse)) (prob E2I2))
+ (transform (from (E1_reverse_section*)) (to (S_reverse)) (prob E2X))
+ 
+ (transform (from (D2_reverse*)) (to (E2_reverse_section)))
+ (transform (from (E2_reverse_section*)) (to (E2_reverse_trans)) (prob E_section2E_trans))
+ (transform (from (E2_reverse_trans*)) (to (E2_reverse_section)))
+ (transform (from (E2_reverse_section*)) (to (E2_reverse_section)) (prob E_section2E_section))
+ (transform (from (E2_reverse_section*)) (to (A0_reverse)) (prob E2I0))
+ (transform (from (E2_reverse_section*)) (to (A1_reverse)) (prob E2I1))
+ (transform (from (E2_reverse_section*)) (to (A2_reverse)) (prob E2I2))
+ (transform (from (E2_reverse_section*)) (to (S_reverse)) (prob E2X))
+ 
+ (transform (from (A0_reverse*)) (to (I0_reverse_section)))
+ (transform (from (I0_reverse_section*)) (to (I0_reverse_trans)) (prob I_section2I_trans))
+ (transform (from (I0_reverse_trans*)) (to (I0_reverse_section)))
+ (transform (from (I0_reverse_section*)) (to (I0_reverse_section)) (prob I_section2I_section))
+ (transform (from (I0_reverse_section*)) (to (D0_reverse)) (prob I2E))
+ 
+ (transform (from (A1_reverse*)) (to (I1_reverse_section)))
+ (transform (from (I1_reverse_section*)) (to (I1_reverse_trans)) (prob I_section2I_trans))
+ (transform (from (I1_reverse_trans*)) (to (I1_reverse_section)))
+ (transform (from (I1_reverse_section*)) (to (I1_reverse_section)) (prob I_section2I_section))
+ (transform (from (I1_reverse_section*)) (to (D1_reverse)) (prob I2E))
+ 
+ (transform (from (A2_reverse*)) (to (I2_reverse_section)))
+ (transform (from (I2_reverse_section*)) (to (I2_reverse_trans)) (prob I_section2I_trans))
+ (transform (from (I2_reverse_trans*)) (to (I2_reverse_section)))
+ (transform (from (I2_reverse_section*)) (to (I2_reverse_section)) (prob I_section2I_section))
+ (transform (from (I2_reverse_section*)) (to (D2_reverse)) (prob I2E))
+ 
+ (transform (from (S_reverse*)) (to (5_reverse_section)) (prob T2UTR))
+ (transform (from (5_donor_reverse*)) (to (5_reverse_section)))
+ (transform (from (5_reverse_section*)) (to (5_reverse_trans)) (prob 3_section23_trans))
+ (transform (from (5_reverse_trans*)) (to (5_reverse_section)))
+ (transform (from (5_reverse_section*)) (to (5_reverse_section)) (prob 3_section23_section))
+ (transform (from (5_reverse_section*)) (to (5_acceptor_reverse)) (prob 323i))
+ (transform (from (5_reverse_section*)) (to (TSS_reverse)) (prob 32X))
+ 
+ (transform (from (5_acceptor_reverse*)) (to (5i_reverse_section)))
+ (transform (from (5i_reverse_section*)) (to (5i_reverse_trans)) (prob 3i_section23i_trans))
+ (transform (from (5i_reverse_trans*)) (to (5i_reverse_section)))
+ (transform (from (5i_reverse_section*)) (to (5i_reverse_section)) (prob 3i_section23i_section))
+ (transform (from (5i_reverse_section*)) (to (5_donor_reverse)) (prob 3i23))
+
+) ;; end grammar geneStructure
+
+;; **** END TOP-LEVEL PRODUCTION RULES **** 
+
+(alphabet
+ (name geneStructure)
+ (token (e f g i j k s t a b c d o n p q r u v w 5 6 ~ h l | 3 4 m y z ? E F G I J K S T A B C D O N P Q R U V W $ % 0 M Z Y & \ ' H L ^ x X [ ] { }))
+
+ (wildcard *)
+ ) ;; end alphabet geneStructure
+

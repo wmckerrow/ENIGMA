@@ -1,0 +1,29 @@
+(((M1:.1,M2:.1,M3:.1,M4:.1)M:.1,S:.1)MS:.1,A:.1)AMS
+0.5 0.02
+0.3 0.3 0.0 0.3 0.3 0.3 0.3 0.0 0.0 0.3 0.3 0.0
+0.2 0.2 0.0 0.2 0.2 0.2 0.2 0.0 0.0 0.2 0.2 0.0
+0.25 0.25 0.0 0.25 0.25 0.25 0.25 0.0 0.0 0.25 0.25 0.0
+0.3 0.3 0.0 0.3 0.3 0.3 0.3 0.0 0.0 0.3 0.3 0.0
+0.4 0.4 0.0 0.4 0.4 0.4 0.4 0.0 0.0 0.4 0.4 0.0
+0.2 0.2 0.0 0.2 0.2 0.2 0.2 0.0 0.0 0.2 0.2 0.0
+0.2 0.2 0.0 0.2 0.2 0.2 0.2 0.0 0.0 0.2 0.2 0.0
+end
+
+File Format is
+Tree string in Newick Format (without spaces)
+EtoI XtoEnd
+Parameters for main tree
+Parameters for mutation rates to leaves in depth first order. If there are 0 lines here then Generator will use same parameters throughout. If there is one, it will use that set for all leaves. If there are the number of leaf parents, a different parameter set will be used for each set of leaf siblings. If there is one line for each leaf, a different parameter will be used on each leaf.
+end	This must be here so we don't try to read comments as parameters.
+
+The parameters should be in the following order
+xetoxx xetoee xtoxex extoxx extoee eitoii eitoee etoexe etoeie ietoii ietoee itoieii
+
+Note on leaf mutation rates:
+If there are 0 lines here then Generator will use same parameters throughout.
+If there is one, it will use that set for all leaves.
+If there is one line for each leaf parent, a different parameter set will be used for each set of leaf siblings.
+If there is one line for each leaf, a different parameter will be used on each leaf.
+
+Note on tree string
+Difference finder assumes that evidence nodes and only evidence contain numbers

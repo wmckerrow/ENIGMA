@@ -1,0 +1,1 @@
+These codes generate random stk files to test the grammars. They output a more simple version of the alphabets so you will have to use the converter codes to generate the full alphabets. See ConversionFlowChart.pdf. Each generator has a corresponding input file. The input for GeneratorX.cpp is inputX.gene. See the input file for information on how to tweak the parameters.
