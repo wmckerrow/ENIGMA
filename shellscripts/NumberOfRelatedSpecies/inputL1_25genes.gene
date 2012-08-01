@@ -1,17 +1,18 @@
 ((((A1:.1,A2:.1,A3:.1,A4:.1)A:.1,B:.1)AB:.1,(C:.1,D:.1)CD:.1)ABCD:.1,((E:.1,F:.1)EF:.1,(G:.1,H:.1)GH)EFGH:.1)ABCDEFGH
-0.5 0.4 0.8 0.3 0.3 50
-0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25
+0.1666 0.1666 0.1666 0.1666 0.1666 0.1666 0.1666 0.1666 0.1666 25
+0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0 0
 end
 
 File Format is
 Tree string in Newick Format (without spaces)
-EtoI,Eto3,Xto5,u3toI,u5toI, numgenes
+E0toI0 E0toI1 E0toI2 E1toI0 E1toI1 E1toI2 E2toI0 E2toI1 E2toI2 number of genes
 Parameters for main tree
 Parameters for mutation rates to leaves in depth first order. If there are 0 lines here then Generator will use same parameters throughout. If there is one, it will use that set for all leaves. If there are the number of leaf parents, a different parameter set will be used for each set of leaf siblings. If there is one line for each leaf, a different parameter will be used on each leaf.
 end	This must be here so we don't try to read comments as parameters.
 
 The parameters should be in the following order
-xe_2_xxe,xe_2_xee,x5_2_xx5,x5_2_x55,ex_2_exx,ex_2_eex,ei_2_eii,ei_2_eei,e3_2_e33,e3_2_ee3,ie_2_iie,ie_2_ee,5u_2_5uu,5u_2_55u,5e_2_5ee,5e_2_55e,u5_2_uu5,u5_2_55u,3v_2_33v,3v_2_3vv,3x_2_33x,3x_2_3xx,v3_2_vv3,v3_2_v33
+xe0toxx xe0toe0e0 float e0xtoxx e0xtoe0e0 e1xtoxx e1xtoe1e1 e2xtoxx e2xtoe2e2 e0i0toi0i0 e0i0toe0e0 e0i1toi1i1 e0i1toe0e0 e0i2toi2i2 e0i2toe0e0 e1i0toi0i0 e1i0toe1e1 e1i1toi1i1 e1i1toe1e1 e1i2toi2i2 e1i2toe1e1 e2i0toi0i0 e2i0toe2e2 e2i1toi1i1 e2i1toe2e2 e2i2toi2i2 e2i2toe2e2 i0e0toi0i0 i0e0toe0e0 i1e1toi1i1 i1e1toe1e1 i2e2toi2i2 i2e2toe2e2 approxIntronInstertion approxGeneInsertion
+
 
 Note on leaf mutation rates:
 If there are 0 lines here then Generator will use same parameters throughout.

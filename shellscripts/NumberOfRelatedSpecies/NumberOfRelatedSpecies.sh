@@ -18,17 +18,17 @@ rm temp																			#Generator won't overwrite data without permission
 Generator_L1UTR_constgenes input8.gene temp > genout_L1.stk						#Generate L1UTR evidence
 L1utr_2_stadn genout_L1.stk > genout_L1_trans.stk								#Add transitions to L1 evidence
 strandrandomly_L1utr genout_L1_trans.stk > genout_L1_trans_strands.stk			#Switch some genes to reverse strand
-getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1,((G1:.1)G:.1,(H1:.1)H:.1)GH:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 .9 .9 .9 .9 7 B C D E F G H .6 .6 .6 .6 .6 .6 .6 > species8.stk
-getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1,((G1:.1)G:.1)GH:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 .9 .9 .9 .9 6 B C D E F G .6 .6 .6 .6 .6 .6 .6 > species7.stk
-getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 .9 .9 .9 .9 5 B C D E F .6 .6 .6 .6 .6 > species6.stk
-getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E)EF:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 .9 .9 .9 .9 4 B C D E .6 .6 .6 .6 > species5.stk
-getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 .9 .9 .9 .9 3 B C D .6 .6 .6 > species4.stk
-getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 .9 .9 .9 .9 2 B C .6 .6 > species3.stk
-getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1)AB:.1)A;" 4 A1 A2 A3 A4 .9 .9 .9 .9 1 B .6 > species2.stk
-getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1)A;" 4 A1 A2 A3 A4 .9 .9 .9 .9 0 > species1.stk
+getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1,((G1:.1)G:.1,(H1:.1)H:.1)GH:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 7 B C D E F G H .6 .6 .6 .6 .6 .6 .6 > species8.stk
+getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1,((G1:.1)G:.1)GH:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 6 B C D E F G .6 .6 .6 .6 .6 .6 .6 > species7.stk
+getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 5 B C D E F .6 .6 .6 .6 .6 > species6.stk
+getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E)EF:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 4 B C D E .6 .6 .6 .6 > species5.stk
+getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 3 B C D .6 .6 .6 > species4.stk
+getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 2 B C .6 .6 > species3.stk
+getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 1 B .6 > species2.stk
+getevidence genout_L1_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 0 > species1.stk
 
 xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species1.stk -t trained.eg	#train the grammar parameters
-xrate -g trained.eg species1 -ar > arout													#ancestral reconstruction
+xrate -g trained.eg species1backwards -ar > arout													#ancestral reconstruction
 simplify_ar arout > xrateout																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1_trans_strands.stk >> accuracy_1							#report accuracy
 
