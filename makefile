@@ -25,6 +25,7 @@ all:
 	make exactpps_L1
 	make simplify_ar
 	make retreestk
+	make Generator_L1UTR_constgenes
 
 eix2stadn: converters/eix2stadn.cpp
 	g++ converters/eix2stadn.cpp -o bin/eix2stadn
@@ -103,6 +104,9 @@ simplify_ar: scoring_xrateout/simplify_ar.cpp
 
 retreestk: miscellaneous/retreestk.cpp
 	g++ miscellaneous/retreestk.cpp -o bin/retreestk
+
+Generator_L1UTR_constgenes: generators/Generator_L1UTR_constgenes.cpp
+	g++ generators/Generator_L1UTR_constgenes.cpp -o bin/Generator_L1UTR_constgenes
 
 clean:
 	mv bin/README temp1234567890
