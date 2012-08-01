@@ -363,7 +363,6 @@ int main(int argc, char *argv[])
 	float EtoI,Eto3,Xto5,u3toI,u5toI;
 	int numgenes;
 	inFile >> EtoI >> Eto3 >> Xto5 >> u3toI >> u5toI;    //get the Markov parameters
-	cerr << Xto5 << endl;
 	inFile >> numgenes;
 	//cout << EtoI << " " << Eto3 << " " << XtoEnd << " " << Xto5 << " " << u3toI << " " << u5toI << endl;
 	float xetoxx[parameterlines],xetoee[parameterlines];

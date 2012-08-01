@@ -26,6 +26,7 @@ all:
 	make simplify_ar
 	make retreestk
 	make Generator_L1UTR_constgenes
+	make getevidence
 
 eix2stadn: converters/eix2stadn.cpp
 	g++ converters/eix2stadn.cpp -o bin/eix2stadn
@@ -107,6 +108,9 @@ retreestk: miscellaneous/retreestk.cpp
 
 Generator_L1UTR_constgenes: generators/Generator_L1UTR_constgenes.cpp
 	g++ generators/Generator_L1UTR_constgenes.cpp -o bin/Generator_L1UTR_constgenes
+	
+getevidence: miscellaneous/getevidence.cpp
+	g++ miscellaneous/getevidence.cpp -o bin/getevidence
 
 clean:
 	mv bin/README temp1234567890
