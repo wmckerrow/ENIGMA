@@ -9,6 +9,7 @@ all:
 	make newL0stk2oldL0stk
 	make oldL0stk2newL0stk
 	make stk2gff_strands
+	make stk2gff_L1utr
 	make strandrandomly
 	make strandrandomly_L1
 	make strandrandomly_L1utr
@@ -27,6 +28,7 @@ all:
 	make retreestk
 	make Generator_L1UTR_constgenes
 	make getevidence
+	make parseeval
 
 eix2stadn: converters/eix2stadn.cpp
 	g++ converters/eix2stadn.cpp -o bin/eix2stadn
@@ -57,6 +59,9 @@ oldL0stk2newL0stk: converters/oldL0stk2newL0stk.cpp
 
 stk2gff_strands: converters/stk2gff_strands.cpp
 	g++ converters/stk2gff_strands.cpp -o bin/stk2gff_strands
+
+stk2gff_L1utr: converters/stk2gff_L1utr.cpp
+	g++ converters/stk2gff_L1utr.cpp -o bin/stk2gff_L1utr
 
 strandrandomly: converters/strandrandomly.cpp
 	g++ converters/strandrandomly.cpp -o bin/strandrandomly
@@ -111,6 +116,9 @@ Generator_L1UTR_constgenes: generators/Generator_L1UTR_constgenes.cpp
 	
 getevidence: miscellaneous/getevidence.cpp
 	g++ miscellaneous/getevidence.cpp -o bin/getevidence
+
+parseeval: miscellaneous/parseeval.cpp
+	g++ miscellaneous/parseeval.cpp -o bin/parseeval
 
 clean:
 	mv bin/README temp1234567890
