@@ -29,13 +29,13 @@ strandrandomly_L1 genout_L1_trans.stk > genout_L1_trans_strands.stk				#Switch s
 GeneratePositions genout_L1_trans_strands.stk > pos
 L1stk2L0stk genout_L1_trans_strands.stk > genout_newL0_trans_strands.stk
 newL0stk2oldL0stk genout_newL0_trans_strands.stk > genout_L0_trans_strands.stk
-getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1,((G1:.1)G:.1,(H1:.1)H:.1)GH:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 7 B C D E F G H 1 1 1 1 1 1 1 > species8.stk
-getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1,((G1:.1)G:.1)GH:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 6 B C D E F G 1 1 1 1 1 1 1 > species7.stk
-getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 5 B C D E F 1 1 1 1 1 > species6.stk
-getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E)EF:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 4 B C D E 1 1 1 1 > species5.stk
-getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 3 B C D 1 1 1 > species4.stk
-getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 2 B C 1 1 > species3.stk
-getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 1 B 1 > species2.stk
+getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1,((G1:.1)G:.1,(H1:.1)H:.1)GH:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 7 B C D E F G H .5 .5 .5 .5 .5 .5 .5 > species8.stk
+getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1,((G1:.1)G:.1)GH:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 6 B C D E F G .5 .5 .5 .5 .5 .5 > species7.stk
+getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E,(F1:.1)F)EF:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 5 B C D E F .5 .5 .5 .5 .5 > species6.stk
+getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1,((((E1:.1)E)EF:.1)EFGH:.1)ABCDEFGH:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 4 B C D E .5 .5 .5 .5 > species5.stk
+getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 3 B C D .5 .5 .5 > species4.stk
+getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 2 B C .5 .5 > species3.stk
+getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 1 B .5 > species2.stk
 getevidence genout_L0_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 0 > species1.stk
 L1stk2L1UTRstk genout_L1_trans_strands.stk > genout_L1utr_trans_strands.stk
 stk2gff_L1utr 0 genout_L1utr_trans_strands.stk genout pos

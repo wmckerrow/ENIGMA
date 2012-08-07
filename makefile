@@ -29,6 +29,15 @@ all:
 	make Generator_L1UTR_constgenes
 	make getevidence
 	make parseeval
+	make choosesections
+	make dotplotter
+	make prepare4stk
+	make sectionAlignmentsStk_stadn_strands
+	make scoreSectionDistances
+	make getdotsubset
+	make getgffsections
+	make all2way
+	make dummymrna
 
 eix2stadn: converters/eix2stadn.cpp
 	g++ converters/eix2stadn.cpp -o bin/eix2stadn
@@ -119,6 +128,33 @@ getevidence: miscellaneous/getevidence.cpp
 
 parseeval: miscellaneous/parseeval.cpp
 	g++ miscellaneous/parseeval.cpp -o bin/parseeval
+
+choosesections: gffANDmaf_2_stk/choosesections.cpp
+	g++ gffANDmaf_2_stk/choosesections.cpp -o bin/choosesections
+
+dotplotter: gffANDmaf_2_stk/dotplotter.cpp
+	g++ gffANDmaf_2_stk/dotplotter.cpp -o bin/dotplotter
+
+prepare4stk: gffANDmaf_2_stk/prepare4stk.cpp
+	g++ gffANDmaf_2_stk/prepare4stk.cpp -o bin/prepare4stk
+
+sectionAlignmentsStk_stadn_strands: gffANDmaf_2_stk/sectionAlignmentsStk_stadn_strands.cpp
+	g++ gffANDmaf_2_stk/sectionAlignmentsStk_stadn_strands.cpp -o bin/sectionAlignmentsStk_stadn_strands
+
+getdotsubset: gffANDmaf_2_stk/getdotsubset.cpp
+	g++ gffANDmaf_2_stk/getdotsubset.cpp -o bin/getdotsubset
+
+scoreSectionDistances: scoreGFF/scoreSectionDistances.cpp
+	g++ scoreGFF/scoreSectionDistances.cpp -o bin/scoreSectionDistances
+
+getgffsections: scoreGFF/getgffsections.cpp
+	g++ scoreGFF/getgffsections.cpp -o bin/getgffsections
+
+all2way: miscellaneous/all2way.cpp
+	g++ miscellaneous/all2way.cpp -o bin/all2way
+
+dummymrna: scoreGFF/dummymrna.cpp
+	g++ scoreGFF/dummymrna.cpp -o bin/dummymrna
 
 clean:
 	mv bin/README temp1234567890

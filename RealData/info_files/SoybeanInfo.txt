@@ -1,0 +1,11 @@
+gi|15386477|emb|AX196294.1|
+Starts at 1
+and has 127197bases
+gi|15386478|emb|AX196295.1|
+Starts at 127198
+and has 335913bases
+gi|15386482|emb|AX196297.1|
+Starts at 463111
+and has 349954bases
+gi|15387597|emb|AX197417.1|
+Starts at 813065

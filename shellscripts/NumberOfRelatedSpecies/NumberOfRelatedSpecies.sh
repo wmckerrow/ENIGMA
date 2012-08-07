@@ -1,3 +1,5 @@
+#As yet untested. I gotten eval installed on fir yet.
+
 cd $ENIGMADIR/shellscripts/NumberOfRelatedSpecies			#For qsub, so we get back to this directory
 export PATH=$ENIGMADIR/bin:$PATH							#So we can find the executables
 

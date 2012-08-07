@@ -1,0 +1,118 @@
+A	.	stop_codon	61	63	.	-	.	gene_id ".6"; transcript_id ".45";
+A	.	CDS	64	150	.	-	0	gene_id ".6"; transcript_id ".45";
+
+A	.	start_codon	271	273	.	+	.	gene_id ".39"; transcript_id ".34";
+A	.	CDS	271	297	.	+	0	gene_id ".39"; transcript_id ".34";
+A	.	stop_codon	298	300	.	+	.	gene_id ".39"; transcript_id ".34";
+
+A	.	stop_codon	481	483	.	-	.	gene_id ".3"; transcript_id ".7";
+A	.	CDS	484	601	.	-	1	gene_id ".3"; transcript_id ".7";
+A	.	CDS	662	813	.	-	0	gene_id ".3"; transcript_id ".7";
+A	.	CDS	994	1083	.	-	0	gene_id ".3"; transcript_id ".7";
+A	.	start_codon	1081	1083	.	-	.	gene_id ".3"; transcript_id ".7";
+
+A	.	stop_codon	1234	1236	.	-	.	gene_id ".11"; transcript_id ".40";
+A	.	CDS	1237	1353	.	-	0	gene_id ".11"; transcript_id ".40";
+A	.	CDS	1504	1593	.	-	0	gene_id ".11"; transcript_id ".40";
+A	.	CDS	1804	1923	.	-	0	gene_id ".11"; transcript_id ".40";
+A	.	start_codon	1921	1923	.	-	.	gene_id ".11"; transcript_id ".40";
+
+A	.	start_codon	2014	2016	.	+	.	gene_id ".130"; transcript_id ".33";
+A	.	CDS	2014	2103	.	+	0	gene_id ".130"; transcript_id ".33";
+A	.	CDS	2224	2400	.	+	0	gene_id ".130"; transcript_id ".33";
+A	.	stop_codon	2401	2403	.	+	.	gene_id ".130"; transcript_id ".33";
+
+A	.	stop_codon	2464	2466	.	-	.	gene_id ".32"; transcript_id ".22";
+A	.	CDS	2467	2554	.	-	2	gene_id ".32"; transcript_id ".22";
+A	.	CDS	2615	2765	.	-	0	gene_id ".32"; transcript_id ".22";
+A	.	CDS	2886	3035	.	-	0	gene_id ".32"; transcript_id ".22";
+A	.	start_codon	3033	3035	.	-	.	gene_id ".32"; transcript_id ".22";
+
+A	.	start_codon	3246	3248	.	+	.	gene_id ".12"; transcript_id ".1";
+A	.	CDS	3246	3362	.	+	0	gene_id ".12"; transcript_id ".1";
+A	.	stop_codon	3363	3365	.	+	.	gene_id ".12"; transcript_id ".1";
+
+A	.	stop_codon	3516	3518	.	-	.	gene_id ".25"; transcript_id ".36";
+A	.	CDS	3519	3635	.	-	0	gene_id ".25"; transcript_id ".36";
+
+A	.	stop_codon	3786	3788	.	-	.	gene_id ".37"; transcript_id ".38";
+A	.	CDS	3789	3905	.	-	0	gene_id ".37"; transcript_id ".38";
+A	.	CDS	4086	4265	.	-	0	gene_id ".37"; transcript_id ".38";
+A	.	start_codon	4263	4265	.	-	.	gene_id ".37"; transcript_id ".38";
+
+A	.	stop_codon	4386	4388	.	-	.	gene_id ".83"; transcript_id ".47";
+A	.	CDS	4389	4505	.	-	0	gene_id ".83"; transcript_id ".47";
+
+A	.	stop_codon	4656	4658	.	-	.	gene_id ".46"; transcript_id ".127";
+A	.	CDS	4659	4775	.	-	0	gene_id ".46"; transcript_id ".127";
+
+A	.	stop_codon	4836	4838	.	-	.	gene_id ".21"; transcript_id ".0";
+A	.	CDS	4839	4897	.	-	0	gene_id ".21"; transcript_id ".0";
+A	.	CDS	5018	5167	.	-	0	gene_id ".21"; transcript_id ".0";
+A	.	start_codon	5165	5167	.	-	.	gene_id ".21"; transcript_id ".0";
+
+A	.	start_codon	5288	5290	.	+	.	gene_id ".48"; transcript_id ".98";
+A	.	CDS	5288	5379	.	+	0	gene_id ".48"; transcript_id ".98";
+A	.	CDS	5470	5561	.	+	1	gene_id ".48"; transcript_id ".98";
+A	.	CDS	5772	5922	.	+	2	gene_id ".48"; transcript_id ".98";
+A	.	CDS	5983	6254	.	+	1	gene_id ".48"; transcript_id ".98";
+A	.	CDS	6345	6554	.	+	2	gene_id ".48"; transcript_id ".98";
+A	.	CDS	6705	6851	.	+	2	gene_id ".48"; transcript_id ".98";
+A	.	stop_codon	6852	6854	.	+	.	gene_id ".48"; transcript_id ".98";
+
+A	.	stop_codon	6975	6977	.	-	.	gene_id ".131"; transcript_id ".10";
+A	.	CDS	6978	7184	.	-	0	gene_id ".131"; transcript_id ".10";
+
+A	.	stop_codon	7305	7307	.	-	.	gene_id ".16"; transcript_id ".56";
+A	.	CDS	7308	7456	.	-	0	gene_id ".16"; transcript_id ".56";
+A	.	CDS	7667	7816	.	-	0	gene_id ".16"; transcript_id ".56";
+A	.	start_codon	7814	7816	.	-	.	gene_id ".16"; transcript_id ".56";
+
+A	.	stop_codon	7967	7969	.	-	.	gene_id ".99"; transcript_id ".44";
+A	.	CDS	7970	8057	.	-	0	gene_id ".99"; transcript_id ".44";
+A	.	CDS	8178	8357	.	-	0	gene_id ".99"; transcript_id ".44";
+A	.	start_codon	8355	8357	.	-	.	gene_id ".99"; transcript_id ".44";
+
+A	.	start_codon	8418	8420	.	+	.	gene_id ".100"; transcript_id ".17";
+A	.	CDS	8418	8537	.	+	0	gene_id ".100"; transcript_id ".17";
+A	.	CDS	8658	8744	.	+	0	gene_id ".100"; transcript_id ".17";
+A	.	stop_codon	8745	8747	.	+	.	gene_id ".100"; transcript_id ".17";
+
+A	.	stop_codon	8928	8930	.	-	.	gene_id ".28"; transcript_id ".13";
+A	.	CDS	8931	9107	.	-	0	gene_id ".28"; transcript_id ".13";
+
+A	.	stop_codon	9318	9320	.	-	.	gene_id ".9"; transcript_id ".43";
+A	.	CDS	9321	9408	.	-	0	gene_id ".9"; transcript_id ".43";
+A	.	CDS	9529	9678	.	-	0	gene_id ".9"; transcript_id ".43";
+A	.	start_codon	9676	9678	.	-	.	gene_id ".9"; transcript_id ".43";
+
+A	.	stop_codon	9799	9801	.	-	.	gene_id ".35"; transcript_id ".5";
+A	.	CDS	9802	9860	.	-	0	gene_id ".35"; transcript_id ".5";
+A	.	CDS	9981	10130	.	-	0	gene_id ".35"; transcript_id ".5";
+A	.	start_codon	10128	10130	.	-	.	gene_id ".35"; transcript_id ".5";
+
+A	.	start_codon	10281	10283	.	+	.	gene_id ".27"; transcript_id ".55";
+A	.	CDS	10281	10367	.	+	0	gene_id ".27"; transcript_id ".55";
+A	.	stop_codon	10368	10370	.	+	.	gene_id ".27"; transcript_id ".55";
+
+A	.	start_codon	10521	10523	.	+	.	gene_id ".31"; transcript_id ".82";
+A	.	CDS	10521	10701	.	+	0	gene_id ".31"; transcript_id ".82";
+A	.	CDS	10822	10882	.	+	2	gene_id ".31"; transcript_id ".82";
+A	.	CDS	11093	11242	.	+	1	gene_id ".31"; transcript_id ".82";
+A	.	CDS	11513	11602	.	+	1	gene_id ".31"; transcript_id ".82";
+A	.	CDS	11663	11722	.	+	1	gene_id ".31"; transcript_id ".82";
+A	.	CDS	11873	11989	.	+	1	gene_id ".31"; transcript_id ".82";
+A	.	stop_codon	11990	11992	.	+	.	gene_id ".31"; transcript_id ".82";
+
+A	.	stop_codon	12083	12085	.	-	.	gene_id ".126"; transcript_id ".2";
+A	.	CDS	12086	12262	.	-	0	gene_id ".126"; transcript_id ".2";
+
+A	.	stop_codon	12413	12415	.	-	.	gene_id ".8"; transcript_id ".18";
+A	.	CDS	12416	12532	.	-	0	gene_id ".8"; transcript_id ".18";
+
+A	.	start_codon	12623	12625	.	+	.	gene_id ".4"; transcript_id ".26";
+A	.	CDS	12623	12714	.	+	0	gene_id ".4"; transcript_id ".26";
+A	.	CDS	12895	13104	.	+	1	gene_id ".4"; transcript_id ".26";
+A	.	CDS	13195	13371	.	+	1	gene_id ".4"; transcript_id ".26";
+A	.	stop_codon	13372	13374	.	+	.	gene_id ".4"; transcript_id ".26";
+

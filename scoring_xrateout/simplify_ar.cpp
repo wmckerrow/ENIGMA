@@ -22,10 +22,7 @@ int main (int argc, char *argv[]) {
 	}
 	string line;
 	while (getline(inFile,line)) {
-		if (line[0] != '#') {
-			if (!getline(inFile,line)) {
-				break;
-			}
+		if (line.substr(0,4)=="#=GR" && line.find("ancrec_CYK_MAP ") != string::npos) {
 			int endlabel=5;
 			while (line[endlabel] != ' ') {
 				endlabel++;

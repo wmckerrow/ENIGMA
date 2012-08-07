@@ -1,0 +1,38 @@
+gi|38678556|gb|AC141115.22|
+Starts at 1
+and has 126187bases
+gi|51699650|gb|AC149303.10|
+Starts at 126188
+and has 141028bases
+gi|45725137|emb|CR378662.1|
+Starts at 267216
+and has 119227bases
+gi|61657707|emb|CR937029.1|
+Starts at 386443
+and has 112155bases
+gi|49405989|gb|AC142498.20|
+Starts at 498598
+and has 114058bases
+gi|45268118|gb|AC146585.18|
+Starts at 612656
+and has 124526bases
+gi|29691165|gb|AY224188.1|
+Starts at 737182
+and has 99431bases
+gi|49034945|gb|AC145021.13|
+Starts at 836613
+and has 119530bases
+gi|49034921|gb|AC130798.14|
+Starts at 956143
+and has 92199bases
+gi|39841116|gb|AC146706.8|
+Starts at 1048342
+and has 106753bases
+gi|29691167|gb|AY224189.1|
+Starts at 1155095
+and has 68460bases
+gi|50057957|gb|AC146705.11|
+Starts at 1223555
+and has 120058bases
+gi|39752729|gb|AC146683.9|
+Starts at 1343613

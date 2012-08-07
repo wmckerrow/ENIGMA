@@ -1,0 +1,17 @@
+gi|330250293|gb|CP002685.1|
+Starts at 1
+and has 106838bases
+gi|332002898|gb|CP002688.1|
+Starts at 106839
+and has 89443bases
+gi|332640072|gb|CP002686.1|
+Starts at 196282
+and has 66137bases
+gi|332640072|gb|CP002686.1|
+Starts at 262419
+and has 68780bases
+gi|332656411|gb|CP002687.1|
+Starts at 331199
+and has 277605bases
+gi|332640072|gb|CP002686.1|
+Starts at 608804
