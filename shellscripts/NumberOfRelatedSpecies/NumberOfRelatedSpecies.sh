@@ -41,8 +41,8 @@ stk2gff_L1utr 0 genout_L1utr_trans_strands.stk genout pos
 gff3_to_gtf.pl genout_A.gff > genout_A.gtf
 
 xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species1.stk -t trained.eg	#train the grammar parameters
-xrate -g trained.eg species1backwards -ar > arout													#ancestral reconstruction
-simplify_ar arout > xrateout																#create an stk with just the ar info
+xrate -g trained.eg species1.stk -ar > arout													#ancestral reconstruction
+simplify_ar arout > xrateout.stk																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1utr_trans_strands.stk >> accuracy_1							#report accuracy
 stk2gff_L1utr 0 xrateout.stk xrateout_1 pos													#convert stk to gff then to gtf for eval
 gff3_to_gtf.pl xrateout_1_A.gff > xrateout_1_A.gtf
@@ -53,7 +53,7 @@ xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species2.stk -x e
 maketranspose expanded.eg species reverse AB > transpose.eg									#transpose the branch ending AB
 xrate -g transpose.eg species2.stk -t trained.eg											#train the grammar parameters
 xrate -g trained.eg species2.stk -ar > arout												#ancestral reconstruction
-simplify_ar arout > xrateout																#create an stk with just the ar info
+simplify_ar arout > xrateout.stk																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1utr_trans_strands.stk >> accuracy_2							#report accuracy
 stk2gff_L1utr 0 xrateout.stk xrateout_2 pos													#convert stk to gff then to gtf for eval
 gff3_to_gtf.pl xrateout_2_A.gff > xrateout_2_A.gtf
@@ -64,7 +64,7 @@ xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species3.stk -x e
 maketranspose expanded.eg species reverse AB ABCD > transpose.eg							#transpose the branch ending AB
 xrate -g transpose.eg species3.stk -t trained.eg											#train the grammar parameters
 xrate -g trained.eg species3.stk -ar > arout												#ancestral reconstruction
-simplify_ar arout > xrateout																#create an stk with just the ar info
+simplify_ar arout > xrateout.stk																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1utr_trans_strands.stk >> accuracy_3							#report accuracy
 stk2gff_L1utr 0 xrateout.stk xrateout_3 pos													#convert stk to gff then to gtf for eval
 gff3_to_gtf.pl xrateout_3_A.gff > xrateout_3_A.gtf
@@ -75,7 +75,7 @@ xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species4.stk -x e
 maketranspose expanded.eg species reverse AB ABCD > transpose.eg							#transpose the branch ending AB
 xrate -g transpose.eg species4.stk -t trained.eg											#train the grammar parameters
 xrate -g trained.eg species4.stk -ar > arout												#ancestral reconstruction
-simplify_ar arout > xrateout																#create an stk with just the ar info
+simplify_ar arout > xrateout.stk																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1utr_trans_strands.stk >> accuracy_4							#report accuracy
 stk2gff_L1utr 0 xrateout.stk xrateout_4 pos													#convert stk to gff then to gtf for eval
 gff3_to_gtf.pl xrateout_4_A.gff > xrateout_4_A.gtf
@@ -86,7 +86,7 @@ xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species5.stk -x e
 maketranspose expanded.eg species reverse AB ABCD ABCDEFGH > transpose.eg					#transpose the branch ending AB
 xrate -g transpose.eg species5.stk -t trained.eg											#train the grammar parameters
 xrate -g trained.eg species5.stk -ar > arout												#ancestral reconstruction
-simplify_ar arout > xrateout																#create an stk with just the ar info
+simplify_ar arout > xrateout.stk																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1utr_trans_strands.stk >> accuracy_5							#report accuracy
 stk2gff_L1utr 0 xrateout.stk xrateout_5 pos													#convert stk to gff then to gtf for eval
 gff3_to_gtf.pl xrateout_5_A.gff > xrateout_5_A.gtf
@@ -97,7 +97,7 @@ xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species6.stk -x e
 maketranspose expanded.eg species reverse AB ABCD ABCDEFGH > transpose.eg					#transpose the branch ending AB
 xrate -g transpose.eg species6.stk -t trained.eg											#train the grammar parameters
 xrate -g trained.eg species6.stk -ar > arout												#ancestral reconstruction
-simplify_ar arout > xrateout																#create an stk with just the ar info
+simplify_ar arout > xrateout.stk																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1utr_trans_strands.stk >> accuracy_6							#report accuracy
 stk2gff_L1utr 0 xrateout.stk xrateout_6 pos													#convert stk to gff then to gtf for eval
 gff3_to_gtf.pl xrateout_6_A.gff > xrateout_6_A.gtf
@@ -108,7 +108,7 @@ xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species7.stk -x e
 maketranspose expanded.eg species reverse AB ABCD ABCDEFGH > transpose.eg					#transpose the branch ending AB
 xrate -g transpose.eg species7.stk -t trained.eg											#train the grammar parameters
 xrate -g trained.eg species7.stk -ar > arout												#ancestral reconstruction
-simplify_ar arout > xrateout																#create an stk with just the ar info
+simplify_ar arout > xrateout.stk																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1utr_trans_strands.stk >> accuracy_7							#report accuracy
 stk2gff_L1utr 0 xrateout.stk xrateout_7 pos													#convert stk to gff then to gtf for eval
 gff3_to_gtf.pl xrateout_7_A.gff > xrateout_7_A.gtf
@@ -119,7 +119,7 @@ xrate -g $ENIGMADIR/grammars/L1utr_trans_strands_4transpose.eg species8.stk -x e
 maketranspose expanded.eg species reverse AB ABCD ABCDEFGH > transpose.eg					#transpose the branch ending AB
 xrate -g transpose.eg species8.stk -t trained.eg											#train the grammar parameters
 xrate -g trained.eg species8.stk -ar > arout												#ancestral reconstruction
-simplify_ar arout > xrateout																#create an stk with just the ar info
+simplify_ar arout > xrateout.stk																#create an stk with just the ar info
 accuracy_L1 A xrateout genout_L1utr_trans_strands.stk >> accuracy_8							#report accuracy
 stk2gff_L1utr 0 xrateout.stk xrateout_8 pos													#convert stk to gff then to gtf for eval
 gff3_to_gtf.pl xrateout_8_A.gff > xrateout_8_A.gtf
