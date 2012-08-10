@@ -1,0 +1,237 @@
+digraph finitestatemachine {
+	size="8,5"
+	node [shape = circle]
+	
+	subgraph clusterX {
+		style=filled;
+		color=lightgray;
+		node [shape=circle,style=filled,fillcolor=white]; "X";
+		node [shape=square,style=filled,fillcolor=white]; "x";
+		"X" -> "x"
+		"x" -> "X"
+		"x" -> "x"
+	}
+	
+	subgraph clusterforward {
+		style=filled;
+		color=pink;
+		node [style=filled;fillcolor=white]
+
+		subgraph cluster5f {
+			color=orange
+			node [shape=square,style=filled,fillcolor=white]; "5"; "h";
+			node [shape=circle,style=filled,fillcolor=white]; "6"; "~"; "|"; "l";
+			"5" -> "6"
+			"6" -> "5"
+			"5" -> "5"
+			"5" -> "~"
+			"~" -> "h"
+			"h" -> "l"
+			"l" -> "h"
+			"h" -> "h"
+			"h" -> "|"
+			"|" -> "5"
+		}
+	
+		subgraph cluster3f {
+		color=firebrick
+			node [shape=square,style=filled,fillcolor=white]; "3"; "m";
+			node [shape=circle,style=filled,fillcolor=white]; "4"; "z"; "y"; "?";
+			"3" -> "3"
+			"3" -> "4"
+			"4" -> "3"
+			"3" -> "z"
+			"z" -> "m"
+			"m" -> "m"
+			"m" -> "y"
+			"y" -> "m"
+			"m" -> "?"
+			"?" -> "3"
+		}
+	
+	
+		subgraph clustercodingf {
+			color = salmon
+	
+			subgraph clusterEI0f {
+				node [shape=square,style=filled,fillcolor=white]; "e"; "i";
+				node [shape=circle,style=filled,fillcolor=white]; "p"; "u"; "d"; "a";
+				"e" -> "e"
+				"e" -> "p"
+				"p" -> "e"
+				"e" -> "d"
+				"d" -> "i"
+				"i" -> "i"
+				"i" -> "u"
+				"u" -> "i"
+				"i" -> "a"
+				"a" -> "e"
+			}
+	
+			subgraph clusterEI1f {
+				node [shape=square,style=filled,fillcolor=white]; "f"; "j";
+				node [shape=circle,style=filled,fillcolor=white]; "q"; "v"; "o"; "b";
+				"f" -> "f"
+				"f" -> "q"
+				"q" -> "f"
+				"f" -> "o"
+				"o" -> "j"
+				"j" -> "j"
+				"j" -> "v"
+				"v" -> "j"
+				"j" -> "b"
+				"b" -> "f"
+			}
+	
+			subgraph clusterEI2f {
+				node [shape=square,style=filled,fillcolor=white]; "g"; "k";
+				node [shape=circle,style=filled,fillcolor=white]; "r"; "w"; "n"; "c";
+				"g" -> "g"
+				"g" -> "r"
+				"r" -> "g"
+				"g" -> "n"
+				"n" -> "k"
+				"k" -> "k"
+				"k" -> "w"
+				"w" -> "k"
+				"k" -> "c"
+				"c" -> "g"
+			}
+	
+			"e" -> "o"
+			"e" -> "n"
+			"f" -> "d"
+			"f" -> "n"
+			"g" -> "d"
+			"g" -> "o"
+	
+		}
+	
+		"e" -> "t"
+		"f" -> "t"
+		"g" -> "t"
+
+		"x" -> "{"
+		"x" -> "s"
+		"{" -> "5"
+		"5" -> "s"
+		"s" -> "e"
+	
+		"t" -> "x"
+		"t" -> "3"
+		"3" -> "}"
+		"}" -> "x"
+	
+	}
+	
+	subgraph clusterreverse {
+		style=filled;
+		color=lightblue;
+		node [style=filled;fillcolor=white]
+
+		subgraph cluster3r {
+		color = darkslategray2
+			node [shape=square,style=filled,fillcolor=white]; "$"; "M";
+			node [shape=circle,style=filled,fillcolor=white]; "%"; "0"; "Z"; "Y";
+			"$" -> "%"
+			"%" -> "$"
+			"$" -> "$"
+			"$" -> "0"
+			"0" -> "M"
+			"M" -> "Y"
+			"Y" -> "M"
+			"M" -> "M"
+			"M" -> "Z"
+			"Z" -> "$"
+		}
+	
+		subgraph cluster5r {
+			color = cornflowerblue
+			node [shape=square,style=filled,fillcolor=white]; "&"; "H";
+			node [shape=circle,style=filled,fillcolor=white]; \; '; L; ^;
+			"&" -> "&"
+			"&" -> "'"
+			"'" -> "&"
+			"&" -> "\\"
+			"\\" -> "H"
+			"H" -> "H"
+			"H" -> "L"
+			"L" -> "H"
+			"H" -> "^"
+			"^" -> "&"
+		}
+	
+		subgraph clustercodingr {
+			color = darkturquoise
+	
+			subgraph clusterEI0r {
+				node [shape=square,style=filled,fillcolor=white]; "E"; "I";
+				node [shape=circle,style=filled,fillcolor=white]; "P"; "U"; "D"; "A";
+				"E" -> "E"
+				"E" -> "P"
+				"P" -> "E"
+				"E" -> "A"
+				"A" -> "I"
+				"I" -> "I"
+				"I" -> "U"
+				"U" -> "I"
+				"I" -> "D"
+				"D" -> "E"
+			}
+	
+			subgraph clusterEI1r {
+				node [shape=square,style=filled,fillcolor=white]; "F"; "J";
+				node [shape=circle,style=filled,fillcolor=white]; "Q"; "V"; "O"; "B";
+				"F" -> "F"
+				"F" -> "Q"
+				"Q" -> "F"
+				"F" -> "B"
+				"B" -> "J"
+				"J" -> "J"
+				"J" -> "V"
+				"V" -> "J"
+				"J" -> "O"
+				"O" -> "F"
+			}
+	
+			subgraph clusterEI2r {
+				node [shape=square,style=filled,fillcolor=white]; "G"; "K";
+				node [shape=circle,style=filled,fillcolor=white]; "R"; "W"; "N"; "C";
+				"G" -> "G"
+				"G" -> "R"
+				"R" -> "G"
+				"G" -> "C"
+				"C" -> "K"
+				"K" -> "K"
+				"K" -> "W"
+				"W" -> "K"
+				"K" -> "N"
+				"N" -> "G"
+			}
+	
+			"E" -> "B"
+			"E" -> "C"
+			"F" -> "A"
+			"F" -> "C"
+			"G" -> "A"
+			"G" -> "B"	
+		}
+		
+		"E" -> "S"
+		"F" -> "S"
+		"G" -> "S"
+		
+		"x" -> "T"
+		"x" -> "]"
+		"]" -> "$"
+		"$" -> "T"
+		"T" -> "E"
+
+		"S" -> "x"
+		"S" -> "&"
+		"&" -> "["
+		"[" -> "x"
+	}
+	
+}
+

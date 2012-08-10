@@ -1,3 +1,19 @@
+/*
+ The dotplotter program takes a .maf file and creates a .dot file containing alignment information about two of the genomes described in the .maf file.
+ Since in my tests I am concatenating a series of medicago, soybean and arabidopsis sections, dotplotter also peroforms that concatenation.
+ Information about this concatenation is given by "info files" (see below.)
+ Optionally, with -a it can only give those lines that correspond to all way alignments of every species considered.
+ The result is written to standard out.
+ 
+ The arguments for dotplotter are as follows:
+ The .maf file, a series of info file pairs, the genome that will be in column 1,
+ the genome that will be in column 2, an optional -a.
+ The info file pairs are the location of an info file, followed by the species that info file is for.
+ 
+ For expample:
+ ./dotplotter someMAF.maf ArabInfoFile Arabidopsis MediInfoFile Medicago SoyInfoFile Soybean Arabidopsis Medicago -a > ArabidopsisMedicagoDotFile.dot
+ */
+
 #define MAXALIGNMENT 25
 #include <iostream>
 #include <string>

@@ -2,4 +2,10 @@ These are the codes I have created as part of the ENIGMA project. Executing any 
 
 Examples of what you can do with these codes can be found in the shell scripts directory.
 
-To compile all the codes type "make" or "make all".
+Installation:
+1) Install xrate: http://biowiki.org/XrateSoftware#Getting_xrate
+2) Add the xrate binary to the path
+3) Install eval: http://mblab.wustl.edu/software.html
+4) Add the eval .pm, .pl files to the path
+5) In the ENIGMA directory type "make" or "make all" to compile the codes
+6) Add an environment variable: $ENIGMADIR = path to ENIGMA directory

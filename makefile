@@ -38,6 +38,8 @@ all:
 	make getgffsections
 	make all2way
 	make dummymrna
+	make sectionAlignmentsStk_L1
+	make evidencereadingframe
 
 eix2stadn: converters/eix2stadn.cpp
 	g++ converters/eix2stadn.cpp -o bin/eix2stadn
@@ -155,6 +157,12 @@ all2way: miscellaneous/all2way.cpp
 
 dummymrna: scoreGFF/dummymrna.cpp
 	g++ scoreGFF/dummymrna.cpp -o bin/dummymrna
+
+sectionAlignmentsStk_L1: gffANDmaf_2_stk/sectionAlignmentsStk_L1.cpp
+	g++ gffANDmaf_2_stk/sectionAlignmentsStk_L1.cpp -o bin/sectionAlignmentsStk_L1
+
+evidencereadingframe: gffANDmaf_2_stk/evidencereadingframe.cpp
+	g++ gffANDmaf_2_stk/evidencereadingframe.cpp -o bin/evidencereadingframe
 
 clean:
 	mv bin/README temp1234567890

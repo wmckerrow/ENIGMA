@@ -1,3 +1,18 @@
+/*
+ This program allows you to limit a dot file to certain part of the genome or remove small alignments.
+ 
+ The command line arguments are:
+ the .dot file,
+ the minimum genome position for the first column species,
+ the maximum position for the first column species,
+ the minimum position for the second column species,
+ the maximum position for the second column species,
+ the minimum alignment length.
+ 
+ For example to limit ourself to only alignments that are at least 25 long:
+ ./getdotsubset originalDot.dot 1 m 1 n 25 > limitedDot.dot, where m >= length of genome 1, n >= length of genome 2.
+ */
+
 #define NUMSPECIES 2
 #include <iostream>
 #include <string>

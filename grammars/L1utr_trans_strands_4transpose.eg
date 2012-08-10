@@ -1327,6 +1327,24 @@
  (name geneStructure)
  (token (e f g i j k s t a b c d o n p q r u v w 5 6 ~ h l | 3 4 m y z ? E F G I J K S T A B C D O N P Q R U V W $ % 0 M Z Y & \ ' H L ^ x X [ ] { }))
 
+ (extend (to +) (from s) (from {))
+ (extend (to -) (from 5) (from 3) (from e) (from f) (from g))
+ (extend (to ,) (from 6) (from 4) (from p) (from q) (from r))
+ (extend (to .) (from ~) (from z) (from d) (from o) (from n))
+ (extend (to /) (from h) (from m) (from i) (from j) (from k))
+ (extend (to :) (from l) (from y) (from u) (from v) (from w))
+ (extend (to <) (from |) (from ?) (from a) (from b) (from c))
+ (extend (to =) (from t) (from }))
+ 
+ (extend (to 9) (from S) (from [))
+ (extend (to @) (from $) (from &) (from E) (from F) (from G))
+ (extend (to _) (from %) (from ') (from P) (from Q) (from R))
+ (extend (to 8) (from ^) (from Z) (from D) (from O) (from N))
+ (extend (to 2) (from H) (from M) (from I) (from J) (from K))
+ (extend (to 7) (from L) (from Y) (from U) (from V) (from W))
+ (extend (to 1) (from \) (from 0) (from A) (from B) (from C))
+ (extend (to >) (from T) (from ]))
+
  (wildcard *)
  ) ;; end alphabet geneStructure
 

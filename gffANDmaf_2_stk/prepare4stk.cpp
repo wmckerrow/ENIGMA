@@ -1,5 +1,34 @@
 //This code is a little sketchy. If you get new data, you might consider running valigrind first to make sure everything is okay.
 
+/*
+ This program sorts the alignments according to position on the target genome, then groups them into blocks based where the evidence says the gene ends.
+ Blocks begin when one piece of evidence finds a CDS and ends when all evidence sources agree on an intergenic region.
+ For each block on the target genome, prepare4stk finds all genes that align to that block.
+ If two alignments from a single block to the same gene cross, the smaller one is deleted.
+ Finally a set of aligned genes is chosen such that out of all the alignment to those genes, no pair cross and such that the total length of alignment is maximized.
+ The alignments to those genes are kept, all others are discarded.
+ Alignments that cover more species are given preference. In other words if a 3 way alignment overlaps a 2 way alignment, the 3 way alignment will be kept even if it is shorter.
+ Finally for each block the fraction of predicted CDS/exon that is covered by an alignment is calculated.
+ A list of all sections with at least some alignment followed by the calculated alignment overlap is output to standard out.
+ The alignments which are kept are written to "goodmaf0."
+ 
+ The command line arguments are as follows:
+ 1 (not used),
+ a label for the aligned species (not used), 
+ location of the dotfile, 
+ position of target species in dot file (whether it is column 0 or 1), 
+ position of aligned species, 
+ a gff3 file annotation the aligned genome, 
+ a label for the target species, 
+ number of evidence sources, 
+ gff3 files for those evidence sources, 
+ start of target genome (usually 1), 
+ end of target genome (or a number larger than the length of the genome if you want to consider the whole genome.)
+ 
+ For example:
+ ./prepare4stk 1 A SomeDotFile.dot 1 0 gff3forAlignedSpecies.gff M 4 est.gff proteinAlignment.gff geneFinder1.gff geneFinder2.gff 1 1500000 > alignmentSections
+ */
+
 #include <iostream>
 #include <string>
 #include <fstream>

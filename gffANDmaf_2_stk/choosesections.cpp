@@ -1,3 +1,9 @@
+/*
+ This program reads through one or more outputs of prepare4stk and gives only those sections that have an exon evidence alignment coverage score (EAC) above a certain threshold.
+ The command line arguments are: outputs from prepare4stk, a threshold for EAC. For example:
+ ./choosesections alignmentSections1 alignmentSections2 .1 > alignmentSectionsMinIs0.1
+*/
+
 #include <iostream>
 #include <string>
 #include <fstream>

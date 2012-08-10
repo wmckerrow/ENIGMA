@@ -1,3 +1,10 @@
+/*
+ This code changes all the values in the last column in a dot file to 2, getting rid of any information about how many species are involved in that alignment.
+ This is so that we can test whether or not adding more aligned species actually helps.
+ The only command line argument is the dot file to be edited. The new dot file is sent to standard out. For example:
+ all2way SM_25.dot > SM_25_2way.dot
+ */
+
 #define NUMSPECIES 2
 #include <iostream>
 #include <string>

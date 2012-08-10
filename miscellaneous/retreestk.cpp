@@ -1,3 +1,9 @@
+/*
+ This code removes the tree from an stk and replaces it with a new one.
+ The command line arguments are: the old stk, the new tree. For example:
+ retreestk old.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1)ABCD:.1)AB:.1)A;"
+ */
+
 #include <iostream>
 #include <string>
 #include <fstream>

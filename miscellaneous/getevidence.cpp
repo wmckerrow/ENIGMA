@@ -1,3 +1,21 @@
+/*
+ This code takes the full stk output by one of the generators and gives only the evidence and alignment lines.
+ It can remove some of the evidence to simulate that fact that some of the alignments and evidence may not be complete.
+ 
+ The command line arguments are:
+ the generator output,
+ the phylogenetic tree for xrate,
+ the number of evidence lines,
+ the names of the evidence lines,
+ the probability that a gene is included in each evidence line, 
+ the number of aligned species, 
+ the names of the aligned species lines, 
+ the probability that a given gene is aligned in a row. 
+ 
+ For example: 
+ getevidence genout_L1utr_trans_strands.stk "#=GF NH (A1:.1,A2:.1,A3:.1,A4:.1,((B1:.1)B:.1,(((C1:.1)C:.1,(D1:.1)D:.1)CD:.1)ABCD:.1)AB:.1)A;" 4 A1 A2 A3 A4 1 1 1 1 3 B C D 1 1 1 > species4.stk
+ */
+
 #include <iostream>
 #include <string>
 #include <fstream>

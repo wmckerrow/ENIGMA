@@ -1,32 +1,3 @@
-/*
- This program sorts the alignments according to position on the target genome, then groups them into blocks based where the evidence says the gene ends. 
- Blocks begin when one piece of evidence finds a CDS and ends when all evidence sources agree on an intergenic region. 
- For each block on the target genome, prepare4stk finds all genes that align to that block. 
- If two alignments from a single block to the same gene cross, the smaller one is deleted. 
- Finally a set of aligned genes is chosen such that out of all the alignment to those genes, no pair cross and such that the total length of alignment is maximized. 
- The alignments to those genes are kept, all others are discarded. 
- Alignments that cover more species are given preference. 
- In other words if a 3 way alignment overlaps a 2 way alignment, the 3 way alignment will be kept even if it is shorter. 
- Finally for each block the fraction of predicted CDS/exon that is covered by an alignment is calculated. 
- A list of all sections with at least some alignment followed by the calculated alignment overlap is output to standard out. 
- The alignments which are kept are written to "goodmaf0."
- 
- The command line arguments are as follows: 
- 1 (not used), 
- a label for the aligned species (not used), 
- location of the dotfile, position of target species in dot file (whether it is column 0 or 1), 
- position of aligned species, 
- a gff3 file annotation the aligned genome, 
- a label for the target species, 
- number of evidence sources, 
- gff3 files for those evidence sources, 
- start of target genome (usually 1), 
- end of target genome (or a number larger than the length of the genome if you want to consider the whole genome.) 
- 
- For example:
- ./prepare4stk 1 A SomeDotFile.dot 1 0 gff3forAlignedSpecies.gff M 4 est.gff proteinAlignment.gff geneFinder1.gff geneFinder2.gff 1 1500000 > alignmentSections
- */
-
 #define MAXALIGN 10
 #define NUMSPECIES 2
 #include <iostream>
@@ -296,7 +267,7 @@ char findletter(int position, gffrow *gff, int numgffrows) {
 					return 'e';
 				}
 				else {
-					return 'g';
+					return 'E';
 				}
 			}
 			if (gff[i].featureType == "gene") {
@@ -315,7 +286,7 @@ char findletter(int position, gffrow *gff, int numgffrows) {
 				return 'i';
 			}
 			else {
-				return 'k';
+				return 'I';
 			}
 		}
 	}
@@ -331,23 +302,57 @@ char findletterfromintchar (int position, intchar *letters, int numintchars, int
 			char theletter=letters[i].character;
 			while (direction == -1) {
 				if (theletter == 'e') {
-					theletter = 'g';
+					theletter = 'E';
 					break;
 				}
-				if (theletter == 'i') {
-					theletter = 'k';
+				if (theletter == 'f') {
+					theletter = 'F';
 					break;
 				}
 				if (theletter == 'g') {
-					theletter = 'e';
+					theletter = 'G';
+					break;
+				}
+				if (theletter == 'i') {
+					theletter = 'I';
+					break;
+				}
+				if (theletter == 'j') {
+					theletter = 'J';
+					break;
 				}
 				if (theletter == 'k') {
+					theletter = 'K';
+					break;
+				}
+				if (theletter == 'E') {
+					theletter = 'e';
+					break;
+				}
+				if (theletter == 'F') {
+					theletter = 'f';
+					break;
+				}
+				if (theletter == 'G') {
+					theletter = 'g';
+					break;
+				}
+				if (theletter == 'I') {
 					theletter = 'i';
+					break;
+				}
+				if (theletter == 'J') {
+					theletter = 'j';
+					break;
+				}
+				if (theletter == 'K') {
+					theletter = 'k';
+					break;
 				}
 				break;
 			}
 			if (direction == 1 && position==letters[i].integer) {
-				if (theletter == 'e') {
+				if (theletter == 'e' || theletter == 'f' || theletter == 'g') {
 					if (i==0) {
 						return 's';
 					}
@@ -357,78 +362,188 @@ char findletterfromintchar (int position, intchar *letters, int numintchars, int
 					if (letters[i-1].character=='i') {
 						return 'a';
 					}
-				}
-				if (theletter == 'g') {
-					if (i==0) {
-						return 'u';
-					}
-					if (letters[i-1].character=='x') {
-						return 'u';
-					}
-					if (letters[i-1].character=='k') {
+					if (letters[i-1].character=='j') {
 						return 'b';
 					}
-				}
-				if (theletter == 'i') {
-					if (i == 0 || letters[i-1].character=='e') {
-						return 'd';
-					}
-				}
-				if (theletter == 'k') {
-					if (i == 0 || letters[i-1].character=='g') {
+					if (letters[i-1].character=='k') {
 						return 'c';
 					}
 				}
+				if (theletter == 'E' || theletter == 'F' || theletter == 'G') {
+					if (i==0) {
+						return 'T';
+					}
+					if (letters[i-1].character=='x') {
+						return 'T';
+					}
+					if (letters[i-1].character=='I') {
+						return 'D';
+					}
+					if (letters[i-1].character=='J') {
+						return 'O';
+					}
+					if (letters[i-1].character=='K') {
+						return 'N';
+					}
+				}
+				if (theletter=='i' || theletter=='j' || theletter=='k') {
+					if (i == 0 || letters[i-1].character == 'e') {
+						return 'd';
+					}
+					if (i == 0 || letters[i-1].character == 'f') {
+						return 'o';
+					}
+					if (i == 0 || letters[i-1].character == 'g') {
+						return 'n';
+					}
+				}
+				if (theletter=='I' || theletter=='J' || theletter=='K') {
+					if (i == 0 || letters[i-1].character == 'E') {
+						return 'A';
+					}
+					if (i == 0 || letters[i-1].character == 'F') {
+						return 'B';
+					}
+					if (i == 0 || letters[i-1].character == 'G') {
+						return 'C';
+					}
+				}
 				if (theletter == 'x') {
-					if (i == 0 || letters[i-1].character=='e') {
+					if (i == 0 || letters[i-1].character == 'e' || letters[i-1].character == 'f' || letters[i-1].character == 'g') {
 						return 't';
 					}
-				}	
+				}
 				if (theletter == 'x') {
-					if (i == 0 || letters[i-1].character=='g') {
-						return 'v';
+					if (i == 0 || letters[i-1].character == 'E' || letters[i-1].character == 'F' || letters[i-1].character == 'G') {
+						return 'S';
 					}
 				}
 			}
 			if (i != numintchars-1) {
 				if (direction == -1 && position==letters[i+1].integer-1) {
-					if (theletter == 'e') {
+					if (theletter == 'e' || theletter == 'f' || theletter == 'g') {
 						if (letters[i+1].character=='x') {
 							return 's';
 						}
-						if (letters[i+1].character=='k') {
+						if (letters[i+1].character=='I') {
 							return 'a';
 						}
-					}
-					if (theletter == 'g') {
-						if (letters[i+1].character=='x') {
-							return 'u';
-						}
-						if (letters[i+1].character=='i') {
+						if (letters[i+1].character=='J') {
 							return 'b';
 						}
-					}
-					if (theletter == 'i') {
-						if (letters[i+1].character=='g') {
-							return 'd';
-						}
-					}
-					if (theletter == 'k') {
-						if (letters[i+1].character=='e') {
+						if (letters[i+1].character=='K') {
 							return 'c';
 						}
 					}
+					if (theletter == 'E' || theletter == 'F' || theletter == 'G') {
+						if (letters[i+1].character=='x') {
+							return 'T';
+						}
+						if (letters[i+1].character=='i') {
+							return 'D';
+						}
+						if (letters[i+1].character=='j') {
+							return 'O';
+						}
+						if (letters[i+1].character=='k') {
+							return 'N';
+						}
+					}
+					if (theletter=='i' || theletter=='j' || theletter=='k') {
+						if (letters[i+1].character == 'E') {
+							return 'd';
+						}
+					}
+					if (theletter=='I') {
+						if (letters[i+1].character == 'e' || letters[i+1].character == 'f' || letters[i+1].character == 'g') {
+							return 'A';
+						}
+					}
+					if (theletter=='J') {
+						if (letters[i+1].character == 'e' || letters[i+1].character == 'f' || letters[i+1].character == 'g') {
+							return 'B';
+						}
+					}
+					if (theletter=='K') {
+						if (letters[i+1].character == 'e' || letters[i+1].character == 'f' || letters[i+1].character == 'g') {
+							return 'C';
+						}
+					}
 					if (theletter == 'x') {
-						if (letters[i+1].character=='g') {
+						if (letters[i+1].character == 'E' || letters[i+1].character == 'F' || letters[i+1].character == 'G') {
 							return 't';
 						}
 					}
 					if (theletter == 'x') {
-						if (letters[i+1].character=='e') {
-							return 'h';
+						if (letters[i+1].character == 'e' || letters[i+1].character == 'f' || letters[i+1].character == 'g') {
+							return 'S';
 						}
 					}
 				}
+			}
+			return theletter;
+		}
+	}
+	return letters[numintchars-1].character;
+}
+
+char findletterfromintchar_nostadn (int position, intchar *letters, int numintchars, int direction) {
+	if (position < 1) {
+		return '*';
+	}
+	for (int i=0; i<numintchars-1; i++) {
+		if (position < letters[i+1].integer) {
+			char theletter=letters[i].character;
+			while (direction == -1) {
+				if (theletter == 'e') {
+					theletter = 'E';
+					break;
+				}
+				if (theletter == 'f') {
+					theletter = 'F';
+					break;
+				}
+				if (theletter == 'g') {
+					theletter = 'G';
+					break;
+				}
+				if (theletter == 'i') {
+					theletter = 'I';
+					break;
+				}
+				if (theletter == 'j') {
+					theletter = 'J';
+					break;
+				}
+				if (theletter == 'k') {
+					theletter = 'K';
+					break;
+				}
+				if (theletter == 'E') {
+					theletter = 'e';
+					break;
+				}
+				if (theletter == 'F') {
+					theletter = 'f';
+					break;
+				}
+				if (theletter == 'G') {
+					theletter = 'g';
+					break;
+				}
+				if (theletter == 'I') {
+					theletter = 'i';
+					break;
+				}
+				if (theletter == 'J') {
+					theletter = 'j';
+					break;
+				}
+				if (theletter == 'K') {
+					theletter = 'k';
+					break;
+				}
+				break;
 			}
 			return theletter;
 		}
@@ -446,24 +561,71 @@ bool is_stad (char character) {
 	if (character == 'a') {
 		return 1;
 	}
-	if (character == 'd') {
-		return 1;
-	}
-	if (character =='u') {
-		return 1;
-	}
-	if (character == 'v') {
-		return 1;
-	}
 	if (character == 'b') {
 		return 1;
 	}
 	if (character == 'c') {
 		return 1;
 	}
+	if (character == 'd') {
+		return 1;
+	}
+	if (character == 'o') {
+		return 1;
+	}
+	if (character == 'n') {
+		return 1;
+	}
+	if (character =='T') {
+		return 1;
+	}
+	if (character == 'S') {
+		return 1;
+	}
+	if (character == 'D') {
+		return 1;
+	}
+	if (character == 'O') {
+		return 1;
+	}
+	if (character == 'N') {
+		return 1;
+	}
+	if (character == 'A') {
+		return 1;
+	}
+	if (character == 'B') {
+		return 1;
+	}
+	if (character == 'C') {
+		return 1;
+	}
 	return 0;
 }
 
+bool is_cds (char character) {
+	if (character =='e') {
+		return 1;
+	}
+	if (character == 'f') {
+		return 1;
+	}
+	if (character == 'g') {
+		return 1;
+	}
+	if (character == 'E') {
+		return 1;
+	}
+	if (character == 'F') {
+		return 1;
+	}
+	if (character == 'G') {
+		return 1;
+	}
+	return 0;
+}
+
+/*
 bool is_sa (char character) {
 	if (character =='s') {
 		return 1;
@@ -473,16 +635,7 @@ bool is_sa (char character) {
 	}
 	return 0;
 }
-
-bool is_bu (char character) {
-	if (character =='b') {
-		return 1;
-	}
-	if (character == 'u') {
-		return 1;
-	}
-	return 0;
-}
+ */
 
 /*
 bool is_td (char character) {
@@ -544,7 +697,6 @@ int removeoverlaps(dotline *sortthis, int dotsize, int targetpos) {
 			else {
 				i++;
 			}
-
 		}
 	}
 	return dotsize;
@@ -608,16 +760,20 @@ int main (int argc, char *argv[]) {
 	if (argc < 3) {
 		cerr << "Please execute like " << argv[0] << " numAlignedSpecies alignedSpeciesInfo targetName numgffs4target gffs4target positionOutputFile sectionsFile tree" << endl;
 		cerr << "alignedSpeciesInfo should look like SpeciesName dotFile targetPosInDotFile alignedPosInDotFile gffFile" << endl;
+		//cerr << "gffs4targetInfo should look like gffFileName evidenceType." << endl;
+		//cerr << "Types are 1: Full evicence; 2: No reading frame." << endl;
 		exit(1);
 	}
 	
 	string line;
 	int numAlignedSpecies=atoi(argv[1]);
 	
+	/*
 	if (numAlignedSpecies > MAXALIGN) {
 		cerr << "MAXALIGN is " << MAXALIGN << ". Recompile with a value of atleast " << numAlignedSpecies << "." << endl;
 		exit(1);
 	}
+	 */
 	
 	string alignedNames[numAlignedSpecies];
 	for (int i=0; i<numAlignedSpecies; i++) {
@@ -743,6 +899,15 @@ int main (int argc, char *argv[]) {
 		}
 	}
 	
+	cerr << "Copying for reverse alignments." << endl;
+	intchar *reversealignedGFFletters[numAlignedSpecies];
+	for (int i=0; i<numAlignedSpecies; i++) {
+		reversealignedGFFletters[i] = new intchar[numlettertrans[i]];
+		for (int j=0; j<numlettertrans[i]; j++) {
+			reversealignedGFFletters[i][j] = alignedGFFletters[i][j];
+		}
+	}
+	
 	/*
 	for (int i=0; i<numAlignedSpecies; i++) {
 		for (int j=0; j<numlettertrans[i]; j++) {
@@ -751,6 +916,127 @@ int main (int argc, char *argv[]) {
 		cout << endl;
 	}
 	 //*/
+	
+	cerr << "Adding reading frame." << endl;
+	for (int i=0; i<numAlignedSpecies; i++) {
+		for (int j=1; j<numlettertrans[i]; j++) {
+			if (alignedGFFletters[i][j].character == 'e' && alignedGFFletters[i][j-1].character == 'j') {
+				alignedGFFletters[i][j].character = 'f';
+			}
+			if (alignedGFFletters[i][j].character == 'e' && alignedGFFletters[i][j-1].character == 'k') {
+				alignedGFFletters[i][j].character = 'g';
+			}
+			
+			if (alignedGFFletters[i][j].character == 'i') {
+				int frame = alignedGFFletters[i][j].integer - alignedGFFletters[i][j-1].integer;
+				if (alignedGFFletters[i][j-1].character == 'g') {
+					frame--;
+				}
+				if (alignedGFFletters[i][j-1].character == 'f') {
+					frame-=2;
+				}
+				frame = frame % 3;
+				if (frame == 1) {
+					alignedGFFletters[i][j].character = 'j';
+				}
+				if (frame == 2) {
+					alignedGFFletters[i][j].character = 'k';
+				}
+			}
+			
+			if (alignedGFFletters[i][j].character == 'E' && alignedGFFletters[i][j-1].character == 'J') {
+				alignedGFFletters[i][j].character = 'F';
+			}
+			if (alignedGFFletters[i][j].character == 'E' && alignedGFFletters[i][j-1].character == 'K') {
+				alignedGFFletters[i][j].character = 'G';
+			}
+			
+			if (alignedGFFletters[i][j].character == 'I') {
+				int frame = alignedGFFletters[i][j].integer - alignedGFFletters[i][j-1].integer;
+				if (alignedGFFletters[i][j-1].character == 'G') {
+					frame--;
+				}
+				if (alignedGFFletters[i][j-1].character == 'F') {
+					frame-=2;
+				}
+				frame = frame % 3;
+				if (frame == 1) {
+					alignedGFFletters[i][j].character = 'J';
+				}
+				if (frame == 2) {
+					alignedGFFletters[i][j].character = 'K';
+				}
+			}
+		}
+	}
+	
+	cerr << "Adding reading frame for reverse aligned." << endl;
+	for (int i=0; i<numAlignedSpecies; i++) {
+		for (int j=numlettertrans[i]-2; j>=0; j--) {
+			if (reversealignedGFFletters[i][j].character == 'e' && reversealignedGFFletters[i][j+1].character == 'j') {
+				reversealignedGFFletters[i][j].character = 'f';
+			}
+			if (reversealignedGFFletters[i][j].character == 'e' && reversealignedGFFletters[i][j+1].character == 'k') {
+				reversealignedGFFletters[i][j].character = 'g';
+			}
+			
+			if (reversealignedGFFletters[i][j].character == 'i') {
+				int frame = reversealignedGFFletters[i][j+2].integer - reversealignedGFFletters[i][j+1].integer;
+				if (reversealignedGFFletters[i][j+1].character == 'g') {
+					frame--;
+				}
+				if (reversealignedGFFletters[i][j+1].character == 'f') {
+					frame-=2;
+				}
+				frame = frame % 3;
+				if (frame == 1) {
+					reversealignedGFFletters[i][j].character = 'j';
+				}
+				if (frame == 2) {
+					reversealignedGFFletters[i][j].character = 'k';
+				}
+			}
+			
+			if (reversealignedGFFletters[i][j].character == 'E' && reversealignedGFFletters[i][j+1].character == 'J') {
+				reversealignedGFFletters[i][j].character = 'F';
+			}
+			if (reversealignedGFFletters[i][j].character == 'E' && reversealignedGFFletters[i][j+1].character == 'K') {
+				reversealignedGFFletters[i][j].character = 'G';
+			}
+			
+			if (reversealignedGFFletters[i][j].character == 'I') {
+				int frame = reversealignedGFFletters[i][j+2].integer - reversealignedGFFletters[i][j+1].integer;
+				if (reversealignedGFFletters[i][j+1].character == 'G') {
+					frame--;
+				}
+				if (reversealignedGFFletters[i][j+1].character == 'F') {
+					frame-=2;
+				}
+				frame = frame % 3;
+				if (frame == 1) {
+					reversealignedGFFletters[i][j].character = 'J';
+				}
+				if (frame == 2) {
+					reversealignedGFFletters[i][j].character = 'K';
+				}
+			}
+		}
+	}
+	
+	/*
+	for (int i=0; i<numAlignedSpecies; i++) {
+		for (int j=0; j<numlettertrans[i]; j++) {
+			cout << alignedGFFletters[i][j].integer << " " << alignedGFFletters[i][j].character << endl;
+		}
+		cout << endl;
+	}
+	for (int i=0; i<numAlignedSpecies; i++) {
+		for (int j=0; j<numlettertrans[i]; j++) {
+			cout << reversealignedGFFletters[i][j].integer << " " << reversealignedGFFletters[i][j].character << endl;
+		}
+		cout << endl;
+	}
+	//*/
 	
 	cerr << "Reading GFFs for target." << endl;
 	gffrow **targetGFFs;
@@ -811,7 +1097,7 @@ int main (int argc, char *argv[]) {
 	 }
 	 cout << endl;
 	 }
-	// */
+	 // */
 	
 	cerr << "Removing duplicates." << endl;
 	int numtargetlettertrans[numgffs4target];
@@ -834,6 +1120,72 @@ int main (int argc, char *argv[]) {
 		}
 		cout << endl;
 	}
+	 //*/
+	
+	
+	/*
+	cerr << "Adding reading frame." << endl;
+	for (int i=0; i<numgffs4target; i++) {
+		for (int j=0; j<numtargetlettertrans[i]; j++) {
+			if (targetGFFletters[i][j].character == 'e' && targetGFFletters[i][j-1].character == 'j') {
+				targetGFFletters[i][j].character = 'f';
+			}
+			if (targetGFFletters[i][j].character == 'e' && targetGFFletters[i][j-1].character == 'k') {
+				targetGFFletters[i][j].character = 'g';
+			}
+			
+			if (targetGFFletters[i][j].character == 'i') {
+				int frame = targetGFFletters[i][j].integer - targetGFFletters[i][j-1].integer;
+				if (targetGFFletters[i][j-1].character == 'f') {
+					frame--;
+				}
+				if (targetGFFletters[i][j-1].character == 'g') {
+					frame-=2;
+				}
+				frame = frame % 3;
+				if (frame == 1) {
+					targetGFFletters[i][j].character = 'k';
+				}
+				if (frame == 2) {
+					targetGFFletters[i][j].character = 'j';
+				}
+			}
+			
+			if (targetGFFletters[i][j].character == 'E' && targetGFFletters[i][j-1].character == 'J') {
+				targetGFFletters[i][j].character = 'F';
+			}
+			if (targetGFFletters[i][j].character == 'E' && targetGFFletters[i][j-1].character == 'K') {
+				targetGFFletters[i][j].character = 'G';
+			}
+			
+			
+			if (targetGFFletters[i][j].character == 'I') {
+				int frame = targetGFFletters[i][j].integer - targetGFFletters[i][j-1].integer;
+				if (targetGFFletters[i][j-1].character == 'F') {
+					frame--;
+				}
+				if (targetGFFletters[i][j-1].character == 'G') {
+					frame-=2;
+				}
+				frame = frame % 3;
+				if (frame == 1) {
+					targetGFFletters[i][j].character = 'K';
+				}
+				if (frame == 2) {
+					targetGFFletters[i][j].character = 'J';
+				}
+			}
+		}
+	}
+	*/
+	 
+	/*
+	 for (int i=0; i<numgffs4target; i++) {
+	 for (int j=0; j<numtargetlettertrans[i]; j++) {
+	 cout << targetGFFletters[i][j].integer << " " << targetGFFletters[i][j].character << endl;
+	 }
+	 cout << endl;
+	 }
 	 //*/
 	
 	cerr << "Preparing to generate stk." << endl;
@@ -928,13 +1280,23 @@ int main (int argc, char *argv[]) {
 			}
 			
 			char thiscolumn[numgffs4target+numAlignedSpecies];
+			char thiscolumn_nostadn[numgffs4target+numAlignedSpecies];
 			for (int j=0; j<numgffs4target; j++) {
 				thiscolumn[j] =  findletterfromintchar (i, targetGFFletters[j], numtargetlettertrans[j],1);
+				thiscolumn_nostadn[j] =  findletterfromintchar_nostadn (i, targetGFFletters[j], numtargetlettertrans[j],1);
 			}
 			for (int j=0; j<numAlignedSpecies; j++) {
 				int positionOnAligned=findalignment(i, targetPosInDotFile[j], posInDotFile[j], alignments[j][currentdots[j]]);
 				if (positionOnAligned != -1) {
-					thiscolumn[numgffs4target+j]= findletterfromintchar(positionOnAligned, alignedGFFletters[j], numlettertrans[j],alignments[j][currentdots[j]].directions[0]*alignments[j][currentdots[j]].directions[1]);
+					if (alignments[j][currentdots[j]].directions[0]*alignments[j][currentdots[j]].directions[1] == 1) {
+						thiscolumn[numgffs4target+j]= findletterfromintchar(positionOnAligned, alignedGFFletters[j], numlettertrans[j],1);
+						thiscolumn_nostadn[numgffs4target+j]= findletterfromintchar_nostadn(positionOnAligned, alignedGFFletters[j], numlettertrans[j],1);
+						
+					}
+					else {
+						thiscolumn[numgffs4target+j]= findletterfromintchar(positionOnAligned, reversealignedGFFletters[j], numlettertrans[j],-1);
+						thiscolumn_nostadn[numgffs4target+j] = findletterfromintchar_nostadn(positionOnAligned, reversealignedGFFletters[j], numlettertrans[j],-1);
+					}
 				}
 				else {
 					int lastaligned=alignments[j][currentdots[j]].top(targetPosInDotFile[j]);
@@ -964,11 +1326,26 @@ int main (int argc, char *argv[]) {
 					
 					//lastalignedto =  oldfindalignment(lastaligned, targetPosInDotFile[j], posInDotFile[j], alignments[j], numdotlines[j], 1);
 					
-					char lastalignedletter=findletterfromintchar(lastalignedto, alignedGFFletters[j], numlettertrans[j],lastdirection); //I'm just setting direction=1 since if we get a stad we're going to throw it away anyway.
+					char lastalignedletter;
+					if (lastdirection == 1) {
+						lastalignedletter=findletterfromintchar(lastalignedto, alignedGFFletters[j], numlettertrans[j],1);
+					}
+					else {
+						lastalignedletter=findletterfromintchar(lastalignedto, reversealignedGFFletters[j], numlettertrans[j],-1);
+					}
+
+					
 					bool allsameletter=1;
 					if (lastalignedto < nextalignedto) {
 						for (int k=lastalignedto; k<nextalignedto; k++) {
-							char thisalignedletter=findletterfromintchar(k, alignedGFFletters[j], numlettertrans[j],lastdirection);
+							char thisalignedletter;
+							if (lastdirection == 1) {
+								thisalignedletter=findletterfromintchar(k, alignedGFFletters[j], numlettertrans[j],1);
+							}
+							else {
+								thisalignedletter=findletterfromintchar(k, reversealignedGFFletters[j], numlettertrans[j],-1);
+							}
+
 							if (thisalignedletter != lastalignedletter) {
 								allsameletter=0;
 								break;
@@ -977,7 +1354,15 @@ int main (int argc, char *argv[]) {
 					}
 					if (nextalignedto < lastalignedto) {
 						for (int k=nextalignedto; k<lastalignedto; k++) {
-							char thisalignedletter=findletterfromintchar(k, alignedGFFletters[j], numlettertrans[j],lastdirection);
+							char thisalignedletter;
+							if (lastdirection == 1) {
+								thisalignedletter=findletterfromintchar(k, alignedGFFletters[j], numlettertrans[j],1);
+							}
+							else {
+								thisalignedletter=findletterfromintchar(k, reversealignedGFFletters[j], numlettertrans[j],-1);
+							}
+
+							
 							if (thisalignedletter != lastalignedletter) {
 								allsameletter=0;
 								break;
@@ -988,7 +1373,7 @@ int main (int argc, char *argv[]) {
 					distanceontarget=sgn(distanceontarget)*distanceontarget;
 					int distanceonaligned=nextalignedto-lastalignedto;
 					distanceonaligned=sgn(distanceonaligned)*distanceonaligned;
-					if (allsameletter && lastalignedletter != 'e' && !is_stad(lastalignedletter) /*&& distanceontarget < 5*distanceonaligned && distanceontarget > 0.2*distanceonaligned*/) {
+					if (allsameletter && !is_cds(lastalignedletter) && !is_stad(lastalignedletter) /*&& distanceontarget < 5*distanceonaligned && distanceontarget > 0.2*distanceonaligned*/) {
 						thiscolumn[numgffs4target+j]=lastalignedletter;
 					}
 					else {
@@ -1011,24 +1396,7 @@ int main (int argc, char *argv[]) {
 			for (int j=0; j<numgffs4target+numAlignedSpecies; j++) {
 				if (is_stad(thiscolumn[j])) {
 					if (last_is_stad) {
-						if (is_sa(thiscolumn[j])) {
-							thiscolumn[j]='e';
-						}
-						if (thiscolumn[j] == 't') {
-							thiscolumn[j]='x';
-						}
-						if (thiscolumn[j] == 'd') {
-							thiscolumn[j]='i';
-						}
-						if (is_bu(thiscolumn[j])) {
-							thiscolumn[j]='g';
-						}
-						if (thiscolumn[j] == 'v') {
-							thiscolumn[j]='x';
-						}
-						if (thiscolumn[j] == 'c') {
-							thiscolumn[j]='k';
-						}
+						thiscolumn[j] = thiscolumn_nostadn[j];
 					}
 					else {
 						newstad=1;
@@ -1052,19 +1420,43 @@ int main (int argc, char *argv[]) {
 			if (stadcolumn) {
 				for (int j=0; j<numgffs4target+numAlignedSpecies; j++) {
 					if (thiscolumn[j] == 'e') {
-						thiscolumn[j]='f';
+						thiscolumn[j]='p';
+					}
+					if (thiscolumn[j] == 'f') {
+						thiscolumn[j]='q';
+					}
+					if (thiscolumn[j] == 'g') {
+						thiscolumn[j]='r';
 					}
 					if (thiscolumn[j] == 'i') {
-						thiscolumn[j]='j';
+						thiscolumn[j]='u';
+					}
+					if (thiscolumn[j] == 'j') {
+						thiscolumn[j]='v';
+					}
+					if (thiscolumn[j] == 'k') {
+						thiscolumn[j]='w';
+					}
+					if (thiscolumn[j] == 'E') {
+						thiscolumn[j]='P';
+					}
+					if (thiscolumn[j] == 'F') {
+						thiscolumn[j]='Q';
+					}
+					if (thiscolumn[j] == 'G') {
+						thiscolumn[j]='R';
+					}
+					if (thiscolumn[j] == 'I') {
+						thiscolumn[j]='U';
+					}
+					if (thiscolumn[j] == 'J') {
+						thiscolumn[j]='V';
+					}
+					if (thiscolumn[j] == 'K') {
+						thiscolumn[j]='W';
 					}
 					if (thiscolumn[j] == 'x') {
 						thiscolumn[j]='y';
-					}
-					if (thiscolumn[j] == 'g') {
-						thiscolumn[j]='h';
-					}
-					if (thiscolumn[j] == 'k') {
-						thiscolumn[j]='l';
 					}
 				}
 			}

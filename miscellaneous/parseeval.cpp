@@ -1,3 +1,18 @@
+/*
+ This code pull out information of interest from the output of evaluate_gtf.pl (part of eval). 
+ It adds a line with the specified information.
+ 
+ The command line arguments are:
+ eval output file, 
+ file to add to, 
+ line where the first piece of information, 
+ column (tab, space delimited) where that information is, 
+ rows and columns for the rest of the information to be added. 
+ 
+ For example: 
+ parseeval evalout_3 exonsensitivity_3 79 2 79 3 11 3 12 3 > garbage
+ */
+
 #define MAXCHILDREN 10
 #define MAXDEPTH 10
 #include <iostream>
